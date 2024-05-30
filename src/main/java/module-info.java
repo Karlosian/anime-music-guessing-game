@@ -1,7 +1,6 @@
 module com.animeguessinggame.animeguessinggame {
     requires javafx.controls;
     requires javafx.fxml;
-
     requires org.controlsfx.controls;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
@@ -10,6 +9,6 @@ module com.animeguessinggame.animeguessinggame {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
 
-    opens com.animeguessinggame.animeguessinggame to javafx.fxml;
+    opens com.animeguessinggame.animeguessinggame to com.fasterxml.jackson.databind, javafx.fxml;
     exports com.animeguessinggame.animeguessinggame;
 }

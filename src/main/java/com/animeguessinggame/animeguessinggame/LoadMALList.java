@@ -1,10 +1,11 @@
 package com.animeguessinggame.animeguessinggame;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kttdevelopment.mal4j.MyAnimeList;
-import com.kttdevelopment.mal4j.anime.Anime;
-import com.kttdevelopment.mal4j.anime.AnimeListStatus;
-import com.kttdevelopment.mal4j.anime.property.AnimeStatus;
+import dev.katsute.mal4j.MyAnimeList;
+import dev.katsute.mal4j.anime.Anime;
+import dev.katsute.mal4j.anime.AnimeListStatus;
+import dev.katsute.mal4j.anime.property.AnimeStatus;
+
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -15,7 +16,8 @@ import java.util.Scanner;
 import java.util.List;
 import java.util.Vector;
 
-import static com.kttdevelopment.mal4j.property.ExperimentalFeature.OP_ED_THEMES;
+import static dev.katsute.mal4j.property.ExperimentalFeature.OP_ED_THEMES;
+
 
 public class LoadMALList {
     public static Scanner scanner = new Scanner(System.in);
@@ -46,17 +48,15 @@ public class LoadMALList {
         ObjectMapper mapper = new ObjectMapper();
 
         Vector<AnimeResponse> openingsList = new Vector<AnimeResponse>();
-        String id;
-        String apiURL;
-        for(int i = 0; i<animeList.size(); i++){
-            id = animeList.elementAt(i).getID().toString();
-            apiURL = "https://api.animethemes.moe/anime?filter%5Bhas%5D=resources&filter%5Bsite%5D=MyAnimeList&filter%5Bexternal_id%5D=" + id + "&include=animethemes.animethemeentries.videos%2Canimethemes.song&page%5Bnumber%5D=1";
-           URL url = new URL(apiURL);
+        for(Anime anime : animeList){
+            String id = anime.getID().toString();
+            String apiURL = "https://api.animethemes.moe/anime?filter%5Bhas%5D=resources&filter%5Bsite%5D=MyAnimeList&filter%5Bexternal_id%5D=" + id + "&include=animethemes.animethemeentries.videos%2Canimethemes.song&page%5Bnumber%5D=1";
+            URL url = new URL(apiURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             AnimeResponse response = mapper.readValue(conn.getInputStream(), AnimeResponse.class);
             openingsList.add(response);
-            System.out.println("LoadMALList.getAllOpenings: " + i + " added to list");
+            System.out.println("LoadMALList.getAllOpenings: " + anime.getTitle() + " added to list");
         }
         return openingsList;
     }

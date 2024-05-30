@@ -1,6 +1,6 @@
 package com.animeguessinggame.animeguessinggame;
 
-import com.kttdevelopment.mal4j.anime.Anime;
+import dev.katsute.mal4j.anime.Anime;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -21,7 +21,7 @@ public class GameController {
         Vector<Anime> animelist = LoadMALList.importList(cid, name);
         //take anime list and make a vector of every opening and its link
         Vector<AnimeResponse> openingsList = LoadMALList.getAllOpenings(animelist);
-        System.out.println(openingsList.elementAt(0).getAnime(true).getAnimethemes().get(0).getAnimethemeentries().get(0).getVideos().get(0));
+        System.out.println(openingsList.elementAt(0).getAnime(true).getAnimethemes().get(0).getAnimethemeentries().get(0).getVideos().get(0).getLink());
 
     }
 
