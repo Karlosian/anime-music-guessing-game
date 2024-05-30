@@ -91,7 +91,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.animeguessinggame.animeguessinggame/com.animeguessinggame.animeguessinggame.HelloApplication
+                                com.animeguessinggame.animeguessinggame/com.animeguessinggame.animeguessinggame.GameApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
