@@ -1,5 +1,7 @@
 package com.animeguessinggame.animeguessinggame;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.katsute.mal4j.MyAnimeList;
 import dev.katsute.mal4j.anime.Anime;
@@ -10,6 +12,7 @@ import dev.katsute.mal4j.anime.property.AnimeStatus;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -44,19 +47,39 @@ public class LoadMALList {
         }
         return animeList;
     }
-    public static Vector<AnimeResponse> getAllOpenings(Vector<Anime> animeList) throws IOException {
+    public static Vector<AnimeResponse> getAllOpenings(Vector<Anime> animeList) {
         ObjectMapper mapper = new ObjectMapper();
 
         Vector<AnimeResponse> openingsList = new Vector<AnimeResponse>();
         for(Anime anime : animeList){
             String id = anime.getID().toString();
             String apiURL = "https://api.animethemes.moe/anime?filter%5Bhas%5D=resources&filter%5Bsite%5D=MyAnimeList&filter%5Bexternal_id%5D=" + id + "&include=animethemes.animethemeentries.videos%2Canimethemes.song&page%5Bnumber%5D=1";
+            try{
             URL url = new URL(apiURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             AnimeResponse response = mapper.readValue(conn.getInputStream(), AnimeResponse.class);
             openingsList.add(response);
-            System.out.println("LoadMALList.getAllOpenings: " + anime.getTitle() + " added to list");
+            System.out.println("LoadMALList.getAllOpenings: " + anime.getTitle() + " added to list");}
+            catch (
+                    ProtocolException e) {
+                System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
+            } catch (MalformedURLException e) {
+
+                throw new RuntimeException(e);
+            } catch (JsonMappingException e) {
+                System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
+            } catch (JsonParseException e) {
+                System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
+            } catch (IOException e) {
+                System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
+            }
+            try {
+                Thread.sleep(700); //implement 700ms delay between requests due to rate limiting
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Thread was interrupted, failed to complete operation");
+            }
         }
         return openingsList;
     }

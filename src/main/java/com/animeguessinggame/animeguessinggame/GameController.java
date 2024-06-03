@@ -9,8 +9,6 @@ import java.util.Scanner;
 import java.util.Vector;
 
 public class GameController {
-    @FXML
-    private Label welcomeText;
 
     public static Scanner s = new Scanner(System.in);
     @FXML
@@ -24,9 +22,8 @@ public class GameController {
         System.out.println(openingsList.elementAt(0).getAnime(true).getAnimethemes().get(0).getAnimethemeentries().get(0).getVideos().get(0).getLink());
 
     }
-
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    public static void SelectRandomOpenings(int num, Vector<AnimeResponse> list){
+        //wip
     }
+
 }
