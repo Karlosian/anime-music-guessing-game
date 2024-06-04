@@ -5,18 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
-import javafx.scene.web.WebView;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.controlsfx.control.textfield.TextFields;
-
 
 public class GameApplication extends Application {
     @Override
@@ -38,8 +37,10 @@ public class GameApplication extends Application {
         String webmUrl = "https://v.animethemes.moe/DragonBall-OP1.webm";
         Media media = new Media(webmUrl);
         MediaPlayer mediaPlayer = new MediaPlayer(media);
-        MediaView mediaView = ((MediaView) root.lookup("#screenViewer"));
-        mediaView.setMediaPlayer(mediaPlayer);
+        MediaView mediaView = new MediaView(mediaPlayer);
+
+        HBox container = (HBox) root.lookup("#videoBox");
+        container.getChildren().add(mediaView);
 
         Scene scene = new Scene(root, 800, 600);
         stage.setResizable(false);

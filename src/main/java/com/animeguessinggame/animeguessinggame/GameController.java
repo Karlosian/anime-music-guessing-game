@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class GameController {
 
     public static Scanner s = new Scanner(System.in);
-    @FXML
+    /*@FXML
     public void initialize() {
         System.out.println("Enter your Client ID and the username you wish to import");
         String cid = s.nextLine();
@@ -21,7 +21,7 @@ public class GameController {
         System.out.println(openingsList.get(0).getAnime(true).getAnimethemes().get(0).getAnimethemeentries().get(0).getVideos().get(0).getLink());
         List<ImportantInfo> animeMusic = LoadMALList.getAsOpenings(openingsList);
         System.out.println("Operation completed");
-    }
+    }*/
 
 
 }
