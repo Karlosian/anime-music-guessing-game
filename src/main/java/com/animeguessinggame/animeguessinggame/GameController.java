@@ -19,8 +19,10 @@ public class GameController {
         Vector<Anime> animelist = LoadMALList.importList(cid, name);
         //take anime list and make a vector of every opening and its link
         Vector<AnimeResponse> openingsList = LoadMALList.getAllOpenings(animelist);
-        System.out.println(openingsList.elementAt(0).getAnime(true).getAnimethemes().get(0).getAnimethemeentries().get(0).getVideos().get(0).getLink());
 
+        System.out.println(openingsList.elementAt(0).getAnime(true).getAnimethemes().get(0).getAnimethemeentries().get(0).getVideos().get(0).getLink());
+        Vector<ImportantInfo> animeMusic = LoadMALList.getAsOpenings(openingsList);
+        System.out.println("Operation completed");
     }
     public static void SelectRandomOpenings(int num, Vector<AnimeResponse> list){
         //wip

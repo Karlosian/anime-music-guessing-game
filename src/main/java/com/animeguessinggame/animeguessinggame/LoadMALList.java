@@ -83,5 +83,36 @@ public class LoadMALList {
         }
         return openingsList;
     }
+    public static Vector<ImportantInfo> getAsOpenings(Vector<AnimeResponse> animeList){
+        Vector<ImportantInfo> goodList = new Vector<ImportantInfo>();
+        for(AnimeResponse ar : animeList){
+            if (ar == null || ar.getAnime(true) == null) {
+                continue; // Skip if ar or the anime is null
+            }
+            ImportantInfo i = new ImportantInfo();
+            i.animeTitle = ar.getAnime(true).getName();
+            i.openingVector = new Vector<OpeningInfo>();
+            List<AnimeTheme> animeThemes = ar.getAnime(true).getAnimethemes();
+            if (animeThemes == null) {
+                continue; // Skip if animeThemes is null
+            }
+            for (AnimeTheme at : ar.getAnime(true).getAnimethemes()) {
+                if (at.getType().equals("OP")) {
+                    OpeningInfo oi = new OpeningInfo();
+                    oi.openingURL = at.getAnimethemeentries().get(0).getVideos().get(0).getLink();
+                    oi.openingTitle = at.getSong().getTitle();
+                    i.openingVector.add(oi);
+                }
+            }
+            goodList.add(i);
+        }
+        return goodList;
+    }
+
+    public static Vector<ImportantInfo> RandomSelectOpenings(Vector<ImportantInfo>[] listOfLists){
+    Vector<ImportantInfo> randomized = new Vector<ImportantInfo>();
+    //WIP
+    return randomized;
+    }
 
 }

@@ -12,7 +12,13 @@ class AnimeResponse {
         return anime;
     }
     public AnimeJson getAnime(boolean returnFirstAnimeJson){
-        return anime.get(0);
+        if(anime.size()>0){
+        return anime.get(0);}
+        else{
+        AnimeJson l = new AnimeJson();
+        return l;
+
+        }
     }
 
     public void setAnime(List<AnimeJson> anime) {
