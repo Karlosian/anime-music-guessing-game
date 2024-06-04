@@ -2,11 +2,11 @@ package com.animeguessinggame.animeguessinggame;
 
 import dev.katsute.mal4j.anime.Anime;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class ImportantInfo {
     String animeTitle = new String();
-    Vector<OpeningInfo> openingVector = new Vector<OpeningInfo>();
+    ArrayList<OpeningInfo> openingList = new ArrayList<OpeningInfo>();
     //wip
 
 }
