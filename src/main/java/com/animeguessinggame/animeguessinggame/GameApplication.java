@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.embed.swing.SwingNode;
@@ -14,17 +15,20 @@ import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
+import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
 import javax.swing.*;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
 public class GameApplication extends Application {
-    private EmbeddedMediaPlayerComponent mediaPlayerComponent;
+    private EmbeddedMediaPlayer mediaPlayer;
+    private MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 
     @Override
-    public void start(Stage stage) throws IOException, URISyntaxException {
+    public void start(Stage stage) throws IOException {
         new NativeDiscovery().discover();
 
         FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("game-view.fxml"));
@@ -49,31 +53,18 @@ public class GameApplication extends Application {
 
         // VLCJ setup
         String webmUrl = "https://v.animethemes.moe/DragonBall-OP1.webm";
-        mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-        MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-        MediaPlayer mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
-
-        SwingNode swingNode = new SwingNode();
-        createSwingContent(swingNode);
-
-        HBox container = (HBox) root.lookup("#videoBox");
-        container.getChildren().add(swingNode);
+        mediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
+        ImageView imageView = (ImageView) root.lookup("#imageView");
+        mediaPlayer.videoSurface().set(new ImageViewVideoSurface(imageView));
 
         stage.show();
 
         mediaPlayer.media().play(webmUrl);
-        mediaPlayer.events().addMediaPlayerEventListener(mediaPlayerComponent);
     }
 
-    private void createSwingContent(SwingNode swingNode) {
-        SwingUtilities.invokeLater(() -> {
-            swingNode.setContent(mediaPlayerComponent);
-        });
-    }
 
     @Override
     public void stop() throws Exception {
-        mediaPlayerComponent.release();
         super.stop();
     }
 

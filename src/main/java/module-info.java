@@ -10,11 +10,10 @@ module com.animeguessinggame.animeguessinggame {
     requires com.fasterxml.jackson.databind;
     requires javafx.web;
     requires javafx.media;
-    requires org.freedesktop.gstreamer;
-    requires org.freedesktop.gstreamer.fx;
     requires java.desktop;
     requires uk.co.caprica.vlcj;
     requires javafx.swing;
+    requires uk.co.caprica.vlcj.javafx;
 
     opens com.animeguessinggame.animeguessinggame to com.fasterxml.jackson.databind, javafx.fxml;
     exports com.animeguessinggame.animeguessinggame;
