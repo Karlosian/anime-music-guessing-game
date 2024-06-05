@@ -13,10 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Scanner;
-
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import static dev.katsute.mal4j.property.ExperimentalFeature.OP_ED_THEMES;
 
@@ -108,9 +105,26 @@ public class LoadMALList {
         return goodList;
     }
 
-    public static List<ImportantInfo> RandomSelectOpenings(List<ImportantInfo>[] listOfLists, int numberOfOpenings){
+    public static List<ImportantInfo> RandomSelectOpenings(ArrayList<List<ImportantInfo>> listOfLists, int numberOfOpenings){
         List<ImportantInfo> randomized = new ArrayList<ImportantInfo>();
-        //WIP
+        for (int i = 0; i< listOfLists.size(); i++){
+            for(int j = 0; j<(numberOfOpenings/listOfLists.size()); j++){
+                int elementsInUserList = listOfLists.get(i).size();
+                int rng = (int)(Math.random() * (elementsInUserList));
+                ImportantInfo chosenOP = listOfLists.get(i).get(rng);
+                //check if chosen anime has OP links (if not then it is invalid and will be skipped)
+                try{if(chosenOP.openingList.get(0).openingURL != null){
+                    randomized.add(chosenOP);
+                }
+                else{
+                    j--;
+                }}
+                catch (IndexOutOfBoundsException e ){
+                    j--;
+                }
+            }
+        }
+        Collections.shuffle(randomized);
         return randomized;
     }
 }

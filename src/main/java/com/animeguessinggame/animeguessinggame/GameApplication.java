@@ -1,5 +1,6 @@
 package com.animeguessinggame.animeguessinggame;
 
+import dev.katsute.mal4j.anime.Anime;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,13 +13,15 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Scanner;
 
 public class GameApplication extends Application {
     public static Stage window;
     private static Scene scene;
     private static ClientInterface clientInterface;
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("home-page.fxml"));
@@ -40,8 +43,8 @@ public class GameApplication extends Application {
         window = stage;
         window.setScene(scene);
         window.show();
-
         clientInterface = new ClientInterface();
+
     }
 
     public void startGame() {
@@ -103,4 +106,5 @@ public class GameApplication extends Application {
     public static void main(String[] args) {
         launch();
     }
+
 }
