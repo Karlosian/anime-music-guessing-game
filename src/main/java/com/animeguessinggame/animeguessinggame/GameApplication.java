@@ -23,6 +23,12 @@ public class GameApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("game-view.fxml"));
         Parent root = fxmlLoader.load();
 
+        Scene scene = new Scene(root, 800, 600);
+        stage.setResizable(false);
+        stage.setTitle("Hello!");
+        stage.setScene(scene);
+        scene.getStylesheets().add(this.getClass().getResource("style.css").toExternalForm());
+
         // Test
         TextField answerBox = (TextField) root.lookup("#answerBox");
 
@@ -37,18 +43,20 @@ public class GameApplication extends Application {
         String webmUrl = "https://v.animethemes.moe/DragonBall-OP1.webm";
         Media media = new Media(webmUrl);
         MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+        mediaPlayer.play();
+
         MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView.setFitWidth(300);
+        mediaView.setFitHeight(300);
+        mediaView.getStyleClass().add("mediaBackground");
 
         HBox container = (HBox) root.lookup("#videoBox");
         container.getChildren().add(mediaView);
 
-        Scene scene = new Scene(root, 800, 600);
-        stage.setResizable(false);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
+        container.getStyleClass().add("videoBox");
 
-        mediaPlayer.play();
+        stage.show();
     }
 
     public static void main(String[] args) {
