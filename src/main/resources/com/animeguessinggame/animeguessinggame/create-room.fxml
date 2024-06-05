@@ -27,7 +27,7 @@
       </HBox>
       <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="287.0" prefHeight="50.0" prefWidth="200.0">
          <children>
-            <Label prefHeight="25.6" prefWidth="200.0" text="Enter MAL Profile Name : " />
+            <Label prefHeight="25.6" prefWidth="200.0" text="Enter Server Port" />
             <TextField prefWidth="300.0" />
          </children>
          <opaqueInsets>
