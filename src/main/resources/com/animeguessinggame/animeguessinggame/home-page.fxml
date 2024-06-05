@@ -14,12 +14,12 @@
             <Font name="Californian FB" size="48.0" />
          </font>
       </Label>
-      <Button mnemonicParsing="false" text="Create new Room">
+      <Button mnemonicParsing="false" onAction="#createRoom" text="Create new Room">
          <VBox.margin>
             <Insets top="30.0" />
          </VBox.margin>
       </Button>
-      <Button mnemonicParsing="false" prefWidth="110.4" text="Join Room">
+      <Button mnemonicParsing="false" onAction="#joinRoom" prefWidth="110.4" text="Join Room">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
