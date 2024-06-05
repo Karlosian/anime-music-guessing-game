@@ -27,7 +27,7 @@
    <StackPane prefHeight="150.0" prefWidth="200.0">
       <children>
          <ImageView id="imageView" fitHeight="384.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true" />
-         <Label prefHeight="417.0" prefWidth="511.0" styleClass="videoBox" stylesheets="@style.css" textAlignment="CENTER" />
+         <Label fx:id="showVideo" prefHeight="417.0" prefWidth="511.0" styleClass="videoBox" stylesheets="@style.css" textAlignment="CENTER" />
       </children>
    </StackPane>
     <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">

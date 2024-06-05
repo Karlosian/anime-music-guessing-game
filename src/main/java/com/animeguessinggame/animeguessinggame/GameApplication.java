@@ -33,9 +33,7 @@ public class GameApplication extends Application {
         link.setOnAction(event -> {
             try {
                 Desktop.getDesktop().browse(new URI("https://www.videolan.org/vlc/"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (URISyntaxException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
@@ -79,9 +77,7 @@ public class GameApplication extends Application {
         link.setOnAction(event -> {
             try {
                 Desktop.getDesktop().browse(new URI("https://myanimelist.net/apiconfig"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (URISyntaxException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });

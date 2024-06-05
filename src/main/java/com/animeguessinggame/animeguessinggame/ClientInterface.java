@@ -5,6 +5,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -31,16 +32,21 @@ public class ClientInterface {
     private Timeline timer;
     private double remainingTime;
 
+    private Label hideVideo;
     private ImageView imageView;
     private EmbeddedMediaPlayer mediaPlayer;
     private MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 
+    private int round = 0;
     private Scene scene;
+    public static String answer;
 
     public void display() {
         window.setScene(scene);
         startVideo("https://v.animethemes.moe/Naruto-OP1.webm");
         startTimer();
+
+        hideVideo.setVisible(true);
     }
 
     public ClientInterface() throws IOException {
@@ -65,6 +71,9 @@ public class ClientInterface {
 
         imageView = (ImageView) root.lookup("#imageView");
         progressBar = (ProgressBar) root.lookup("#timeLeft");
+        hideVideo = (Label) root.lookup("#showVideo");
+
+        round = 1;
     }
 
     public void startVideo(String url) {
@@ -81,10 +90,15 @@ public class ClientInterface {
             progressBar.setProgress(remainingTime / 30);
 
             if (remainingTime <= 0) {
+                hideVideo.setVisible(false);
                 timer.stop();
             }
         }));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
+    }
+
+    private void checkAnswer() {
+
     }
 }
