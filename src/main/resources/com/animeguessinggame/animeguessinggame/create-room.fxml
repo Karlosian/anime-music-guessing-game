@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="Create New Room">
+         <font>
+            <Font size="36.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="40.0" />
+         </VBox.margin>
+      </Label>
+      <HBox alignment="CENTER" prefHeight="30.0" prefWidth="200.0">
+         <children>
+            <Label prefWidth="200.0" text="Enter MAL API Key : " />
+            <TextField prefWidth="300.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" layoutX="10.0" layoutY="287.0" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Label prefWidth="200.0" text="Enter MAL Profile Name : " />
+            <TextField prefWidth="300.0" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

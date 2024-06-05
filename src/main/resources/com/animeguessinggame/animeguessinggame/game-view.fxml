@@ -3,13 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.GameController">
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.GameApplication">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -18,12 +20,19 @@
         <font>
             <Font size="36.0" />
         </font></Label>
-    <HBox fx:id="videoBox" alignment="CENTER">
-      <ImageView id="imageView" fitHeight="384.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true" />
-    </HBox>
+   <ProgressBar fx:id="timeLeft" minHeight="-Infinity" prefHeight="20.0" prefWidth="512.0" progress="0.65">
+      <VBox.margin>
+         <Insets />
+      </VBox.margin></ProgressBar>
+   <StackPane prefHeight="150.0" prefWidth="200.0">
+      <children>
+         <ImageView id="imageView" fitHeight="384.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true" />
+         <Label prefHeight="417.0" prefWidth="511.0" styleClass="videoBox" stylesheets="@style.css" textAlignment="CENTER" />
+      </children>
+   </StackPane>
     <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
         <children>
-            <Label text="Answer : " />
+            <Label prefHeight="25.0" text="Answer : " />
             <TextField fx:id="answerBox" prefWidth="400.0">
                 <HBox.margin>
                     <Insets right="5.0" />
