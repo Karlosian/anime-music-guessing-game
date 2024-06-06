@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
@@ -33,7 +34,7 @@ import java.util.ResourceBundle;
 
 import static com.animeguessinggame.animeguessinggame.GameApplication.window;
 
-public class ClientInterface implements Initializable {
+public class ClientInterface {
     public static List<String> possibleSuggestions;
     @FXML
     private TextField answerBox;
@@ -49,10 +50,14 @@ public class ClientInterface implements Initializable {
     private double remainingTime;
     private EmbeddedMediaPlayer mediaPlayer;
     private MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
+    private Button submitButton;
 
     private int round = 0;
     private Scene scene;
-    public static String answer;
+    private int points = 0;
+
+    public static String answer = "test"; // change this string to the name of the anime op
+
 
     public void display() {
         window.setScene(scene);
@@ -73,6 +78,7 @@ public class ClientInterface implements Initializable {
 
         // Auto-completion setup
         answerBox = (TextField) root.lookup("#answerBox");
+        answerBox.setDisable(false);
 
         possibleSuggestions = Arrays.asList(
                 "C", "C#", "C++", "F#", "GoLang",
@@ -85,12 +91,22 @@ public class ClientInterface implements Initializable {
         imageView = (ImageView) root.lookup("#imageView");
         progressBar = (ProgressBar) root.lookup("#timeLeft");
         hideVideo = (Label) root.lookup("#showVideo");
+        submitButton = (Button) root.lookup("#submitButton");
 
-        round = 1;
+        submitButton.setOnAction(event -> submitAnswer());
+
+        round = 1; points = 0;
     }
 
     public void submitAnswer() {
         String clientAnswer = answerBox.getText();
+        answerBox.setDisable(true);
+
+        if (clientAnswer.equals(answer)) {
+            points += (int)(1000 * (remainingTime / 30));
+        }
+
+        System.out.println(clientAnswer);
     }
 
     public void revealAnswer() {
@@ -122,15 +138,11 @@ public class ClientInterface implements Initializable {
 
             if (remainingTime <= 0) {
                 hideVideo.setVisible(false);
+                revealAnswer();
                 timer.stop();
             }
         }));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 }
