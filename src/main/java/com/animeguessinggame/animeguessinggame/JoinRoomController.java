@@ -27,7 +27,6 @@ public class JoinRoomController {
     private String roomIP = new String();
     private int roomPort;
 
-
     @FXML
     public void StartGame() throws IOException {
         MALusername = malUsernameField.getText();
@@ -51,5 +50,7 @@ public class JoinRoomController {
             playerList.add(new Label(String.valueOf(i + 1)), 0, i);
             playerList.add(new Label(users.get(i)), 1, i);
         }
+
+
     }
-    }
+}
