@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.GameApplication">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.CreateRoomController">
    <children>
       <Label text="Create New Room">
          <font>
@@ -22,13 +22,13 @@
       <HBox alignment="CENTER" prefHeight="30.0" prefWidth="200.0">
          <children>
             <Label prefWidth="200.0" text="Enter MAL API Key : " />
-            <TextField prefWidth="300.0" />
+            <TextField prefWidth="300.0" fx:id="apiKeyField"/>
          </children>
       </HBox>
       <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="287.0" prefHeight="50.0" prefWidth="200.0">
          <children>
             <Label prefHeight="25.6" prefWidth="200.0" text="Enter Server Port" />
-            <TextField prefWidth="300.0" />
+            <TextField prefWidth="300.0" fx:id="serverPortField"/>
          </children>
          <opaqueInsets>
             <Insets />
@@ -47,7 +47,7 @@
       </Label>
       <HBox alignment="CENTER" prefHeight="59.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" prefWidth="130.4" text="Start Game" />
+            <Button mnemonicParsing="false" prefWidth="130.4" text="Start Game" onAction="#handleStartGame"/>
          </children>
          <VBox.margin>
             <Insets top="5.0" />

@@ -25,14 +25,11 @@ public class GameClient {
         clientSocket.close();
     }
 
-    public static void main(String[] args) {
-        String serverIp = "localhost";
-        int serverPort = 6969;
+    public static void connectClient(String serverIp, int serverPort, String userName) {
         try {
             GameClient client = new GameClient(serverIp, serverPort);
 
-            // Create user info
-            String userName = "User1";
+            // Create test info
             List<ImportantInfo> openingList = new ArrayList<>();
 
             // Send user info to the server

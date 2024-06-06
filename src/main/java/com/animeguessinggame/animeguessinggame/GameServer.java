@@ -10,7 +10,7 @@ public class GameServer {
     private ServerSocket serverSocket;
         public GameServer(int port) throws IOException {
                 serverSocket = new ServerSocket(port);
-                System.out.println("Server started on port" + port);
+                System.out.println("Server started on port " + port);
         }
         public void start(){
                 while(true){
@@ -49,8 +49,7 @@ public class GameServer {
         }
     }
 
-        public static void main(String[] args){
-            int port = 6969;
+        public static void StartServer(int port){
             try{
                 GameServer server = new GameServer(port);
                 server.start();

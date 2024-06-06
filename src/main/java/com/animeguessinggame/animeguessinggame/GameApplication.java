@@ -22,6 +22,9 @@ public class GameApplication extends Application {
     public static Stage window;
     private static Scene scene;
     private static ClientInterface clientInterface;
+
+
+
     @Override
     public void start(Stage stage) throws IOException {
         // Sets up the FXML files for the user game
@@ -49,6 +52,8 @@ public class GameApplication extends Application {
     public void startGame() {
         clientInterface.display();
     }
+
+
 
     public void createRoom() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("create-room.fxml"));
