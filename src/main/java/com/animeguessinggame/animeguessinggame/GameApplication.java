@@ -53,8 +53,6 @@ public class GameApplication extends Application {
         clientInterface.display();
     }
 
-
-
     public void createRoom() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("create-room.fxml"));
         Parent root = fxmlLoader.load();

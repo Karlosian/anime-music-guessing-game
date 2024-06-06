@@ -41,7 +41,7 @@ public class GameClient {
         clientSocket.close();
     }
 
-    public static void connectClient(String serverIp, int serverPort, String userName) {
+    public static List<String> connectClient(String serverIp, int serverPort, String userName) {
         try {
             GameClient client = new GameClient(serverIp, serverPort);
             List<ImportantInfo> openingList = new ArrayList<>();
@@ -53,8 +53,11 @@ public class GameClient {
             client.requestMalList(userName);
             // close the client connection
             client.close();
+
+            return usernames;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return null;
     }
     }
