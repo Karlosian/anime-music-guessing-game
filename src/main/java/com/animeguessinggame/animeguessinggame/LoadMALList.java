@@ -48,7 +48,12 @@ public class LoadMALList {
         ObjectMapper mapper = new ObjectMapper();
 
         List<AnimeResponse> openingsList = new ArrayList<AnimeResponse>();
+        Set<String> processedAnimeIds = new HashSet<>();
+
         for(Anime anime : animeList){
+            if (processedAnimeIds.contains(anime.getID().toString())) {
+                continue; // Skip if this anime has already been processed
+            }
             String id = anime.getID().toString();
             String apiURL = "https://api.animethemes.moe/anime?filter%5Bhas%5D=resources&filter%5Bsite%5D=MyAnimeList&filter%5Bexternal_id%5D=" + id + "&include=animethemes.animethemeentries.videos%2Canimethemes.song&page%5Bnumber%5D=1";
             try{
@@ -57,16 +62,9 @@ public class LoadMALList {
                 conn.setRequestMethod("GET");
                 AnimeResponse response = mapper.readValue(conn.getInputStream(), AnimeResponse.class);
                 openingsList.add(response);
+                processedAnimeIds.add(id);
                 System.out.println("LoadMALList.getAllOpenings: " + anime.getTitle() + " added to list");
-            } catch (ProtocolException e) {
-                System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            } catch (JsonMappingException e) {
-                System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
-            } catch (JsonParseException e) {
-                System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
-            } catch (IOException e) {
+            }catch (IOException e) {
                 System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
             }
             try {

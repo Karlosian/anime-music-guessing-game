@@ -1,6 +1,7 @@
 package com.animeguessinggame.animeguessinggame;
 
 import com.almasb.fxgl.net.ClientConfig;
+import dev.katsute.mal4j.anime.Anime;
 
 import java.io.*;
 import java.net.*;
@@ -53,11 +54,15 @@ public class GameServer {
                         broadcastUsernames();
                     }
                     while (true) {
+                        try{
                         String command = (String) in.readObject();
                         if (command.equals("GET_MAL_LIST")) {
                             AllAnimeLists.add(getMalList(userName));
                             out.writeObject("Operation Complete");
                             out.flush();
+                        }
+                        }catch(EOFException e){
+                            //this means that no command was sent, its whatever ig, no need to print anything
                         }
                     }
 
@@ -74,7 +79,9 @@ public class GameServer {
             }
     }
     private List<ImportantInfo> getMalList(String userName) {
-        return getAsOpenings(getAllOpenings(importList(GameServer.apiKey, userName)));
+            List<Anime> a = importList(GameServer.apiKey, userName);
+            List<AnimeResponse> r = getAllOpenings(a);
+            return getAsOpenings(r);
     }
         public void StartServer(int port){
             try{
