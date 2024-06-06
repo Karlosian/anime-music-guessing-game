@@ -10,15 +10,31 @@ import java.util.List;
 public class GameClient {
     private Socket clientSocket;
     private ObjectOutputStream out;
+    private ObjectInputStream in;
 
     public GameClient(String ip, int port) throws IOException{
         clientSocket = new Socket(ip, port);
         out = new ObjectOutputStream(clientSocket.getOutputStream());
+        in = new ObjectInputStream(clientSocket.getInputStream());
     }
     public void sendUserInfo(String userName, List<ImportantInfo> openingList) throws IOException {
         out.writeObject(userName);
-        out.writeObject(openingList);
         out.flush();
+    }
+    public void requestMalList(String userName) throws IOException {
+        out.writeObject("GET_MAL_LIST");
+        out.flush();
+        try {
+            //should send a response if operation is completed successfully
+            String response = (String) in.readObject();
+            System.out.println(response);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getUsernames() throws IOException, ClassNotFoundException {
+        return (List<String>) in.readObject();
     }
     public void close() throws IOException {
         out.close();
@@ -28,16 +44,16 @@ public class GameClient {
     public static void connectClient(String serverIp, int serverPort, String userName) {
         try {
             GameClient client = new GameClient(serverIp, serverPort);
-
-            // Create test info
             List<ImportantInfo> openingList = new ArrayList<>();
-
-            // Send user info to the server
             client.sendUserInfo(userName, openingList);
 
-            // Close the client connection
+            List<String> usernames = client.getUsernames();
+            System.out.println("Connected users: " + usernames);
+
+            client.requestMalList(userName);
+            // close the client connection
             client.close();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

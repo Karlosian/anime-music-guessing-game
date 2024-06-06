@@ -5,7 +5,11 @@ import javafx.fxml.FXML;
 import java.awt.*;
 import java.io.IOException;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import static java.lang.Integer.parseInt;
 
@@ -14,7 +18,6 @@ public class CreateRoomController {
     private TextField apiKeyField;
     @FXML
     private TextField serverPortField;
-    private String apiKey;
 
     @FXML
     private void handleStartGame() throws IOException {
@@ -22,10 +25,29 @@ public class CreateRoomController {
         int port = parseInt(serverPortField.getText());
         System.out.println("API Key: " + apiKey);
         System.out.println("Port: " + port);
-        this.apiKey = apiKey;
-        GameServer.StartServer(port);
+        GameServer.apiKey = apiKey;
+        new Thread(() -> {
+            try {
+            GameServer gameServer = new GameServer(port);
+            gameServer.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
 
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("waiting-room.fxml"));
+            Parent waitingRoomRoot = loader.load();
+            Scene waitingRoomScene = new Scene(waitingRoomRoot);
+
+            // Get the current stage and set the new scene
+            Stage stage = (Stage) apiKeyField.getScene().getWindow();
+            stage.setScene(waitingRoomScene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     }
 
 
-}
+
