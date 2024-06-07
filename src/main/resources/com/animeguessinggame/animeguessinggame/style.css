@@ -9,3 +9,22 @@
     -fx-background-position: center center;
     -fx-background-color: white;
 }
+
+.homePageBackground {
+    -fx-background-image: url(HomePage.png);
+}
+
+.homePageButton {
+    -fx-background-color: #393535;
+    -fx-text-fill: white;
+    -fx-border-radius: 20px;
+}
+
+.homePageButton:hover {
+    -fx-background-color: #cc912a;
+}
+
+.homePageTest {
+    -fx-background-color: #811d1d;
+    -fx-text-fill: white;
+}

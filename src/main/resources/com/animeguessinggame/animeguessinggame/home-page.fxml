@@ -4,27 +4,24 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.GameApplication">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="homePageBackground" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.GameApplication">
    <children>
-      <Label text="GUESS THE ANIME">
-         <font>
-            <Font name="Californian FB" size="48.0" />
-         </font>
-      </Label>
-      <Button mnemonicParsing="false" onAction="#createRoom" text="Create new Room">
+      <Pane prefHeight="200.0" prefWidth="200.0" />
+      <Button mnemonicParsing="false" onAction="#createRoom" styleClass="homePageButton" stylesheets="@style.css" text="Create new Room">
          <VBox.margin>
             <Insets top="30.0" />
          </VBox.margin>
       </Button>
-      <Button mnemonicParsing="false" onAction="#joinRoom" prefWidth="110.4" text="Join Room">
+      <Button mnemonicParsing="false" onAction="#joinRoom" prefWidth="110.4" styleClass="homePageButton" stylesheets="@style.css" text="Join Room">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
       </Button>
-      <Button mnemonicParsing="false" onAction="#startGame" prefWidth="110.4" text="Test">
+      <Button mnemonicParsing="false" onAction="#startGame" prefWidth="110.4" styleClass="homePageTest" stylesheets="@style.css" text="Test">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
@@ -33,6 +30,9 @@
          <VBox.margin>
             <Insets top="30.0" />
          </VBox.margin>
+         <font>
+            <Font name="Calibri Italic" size="15.0" />
+         </font>
       </Label>
       <Hyperlink fx:id="downloadLink" text="Download VLC" />
    </children>
