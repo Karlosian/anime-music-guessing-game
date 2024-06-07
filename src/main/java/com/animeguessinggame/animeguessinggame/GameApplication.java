@@ -45,11 +45,11 @@ public class GameApplication extends Application {
         window = stage;
         window.setScene(scene);
         window.show();
-        clientInterface = new ClientInterface();
 
     }
 
-    public void startGame() {
+    public void startGame() throws IOException {
+        clientInterface = new ClientInterface();
         clientInterface.display();
     }
 

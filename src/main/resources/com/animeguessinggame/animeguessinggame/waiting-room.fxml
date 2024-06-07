@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.WaitingRoomController">
     <children>
         <Label text="Waiting Room">
             <font>
@@ -36,7 +36,7 @@
         </GridPane>
         <HBox alignment="CENTER">
             <children>
-                <Button mnemonicParsing="false" text="Start Game">
+                <Button mnemonicParsing="false" text="Start Game" onAction="#StartGame" fx:id="StartButton">
                     <HBox.margin>
                         <Insets right="5.0" />
                     </HBox.margin>

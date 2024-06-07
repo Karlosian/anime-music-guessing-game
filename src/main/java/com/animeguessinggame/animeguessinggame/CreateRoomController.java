@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,6 +19,7 @@ public class CreateRoomController {
     private TextField apiKeyField;
     @FXML
     private TextField serverPortField;
+    private GameClient gameClient;
 
     @FXML
     private void handleStartGame() throws IOException {
@@ -38,6 +40,8 @@ public class CreateRoomController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("waiting-room.fxml"));
             Parent waitingRoomRoot = loader.load();
+            WaitingRoomController waitingRoomController = loader.getController();
+            waitingRoomController.initialize(gameClient);
             Scene waitingRoomScene = new Scene(waitingRoomRoot);
 
             // Get the current stage and set the new scene
@@ -47,6 +51,7 @@ public class CreateRoomController {
             e.printStackTrace();
         }
     }
+
     }
 
 

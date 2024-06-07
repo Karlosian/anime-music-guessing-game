@@ -1,5 +1,6 @@
 package com.animeguessinggame.animeguessinggame;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -32,24 +33,49 @@ public class JoinRoomController {
         MALusername = malUsernameField.getText();
         roomIP = RoomCodeField.getText();
         roomPort = parseInt(RoomPortField.getText());
-        List<String> users = GameClient.connectClient(roomIP,roomPort,MALusername);
+        Task<GameClient.ClientConnectionResult> task = new Task<GameClient.ClientConnectionResult>() {
+            @Override
+            protected GameClient.ClientConnectionResult call() throws Exception {
+                return GameClient.connectClient(roomIP, roomPort, MALusername);
+            }
+            @Override
+            protected void succeeded() {
+                try {
+                    GameClient.ClientConnectionResult result = getValue();
+                    GameClient gameClient = result.getClient();
+                    List<String> users = result.getUsernames();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("waiting-room.fxml"));
-        Parent waitingRoomRoot = loader.load();
-        Scene waitingRoomScene = new Scene(waitingRoomRoot);
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("waiting-room.fxml"));
+                    Parent waitingRoomRoot = loader.load();
+                    WaitingRoomController waitingRoomController = loader.getController();
+                    waitingRoomController.initialize(gameClient); //pass gameclient so that game is able to start
 
-        // Get the current stage
-        Stage stage = (Stage) RoomCodeField.getScene().getWindow();
-        stage.setScene(waitingRoomScene);
+                    Scene waitingRoomScene = new Scene(waitingRoomRoot);
+                    
+                    // Get the current stage
+                    Stage stage = (Stage) RoomCodeField.getScene().getWindow();
+                    stage.setScene(waitingRoomScene);
 
-        // Add players that joined in the Gridpane
-        GridPane playerList = (GridPane) waitingRoomRoot.lookup("#playerList");
-        assert users != null;
-        if (users.isEmpty()) return;
-        for (int i = 0; i < users.size(); i++) {
-            playerList.add(new Label(String.valueOf(i + 1)), 0, i);
-            playerList.add(new Label(users.get(i)), 1, i);
-        }
+                    // Add players that joined in the Gridpane
+                    GridPane playerList = (GridPane) waitingRoomRoot.lookup("#playerList");
+                    assert users != null;
+                    if (users.isEmpty()) return;
+                    for (int i = 0; i < users.size(); i++) {
+                        playerList.add(new Label(String.valueOf(i + 1)), 0, i);
+                        playerList.add(new Label(users.get(i)), 1, i);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            protected void failed(){
+                getException().printStackTrace();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.setDaemon(true); //lets the thread get terminated when app exits
+        thread.start();
 
 
     }
