@@ -1,2 +1,8 @@
 Make scoreboard work (client must send their score to server then fetch other clients' score)
+    When score calculated, Client sends score to server
+    Server recieves score and puts it in list with userName
+    When server gets score from all users, server sends score back to all clients
+    Client puts score and UserNames in leaderboard
+
+
 Make end of game work (very simple, just add a screen that says "The End")

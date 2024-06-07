@@ -7,6 +7,7 @@ import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class GameClient {
@@ -15,10 +16,12 @@ public class GameClient {
     private ObjectInputStream in;
     private ClientInterface clientInterface;
 
+    public static String currentUserName = new String();
+
 
     public ArrayList<String> animeNames = new ArrayList<>();
 
-    private static ArrayList<String> usernames = new ArrayList<>();
+    public static ArrayList<String> usernames = new ArrayList<>();
 
     public GameClient(String ip, int port, ClientInterface clientInterface) throws IOException{
         this.clientInterface = clientInterface;
@@ -39,6 +42,11 @@ public class GameClient {
     public void sendUserInfo(String userName) throws IOException {
         out.writeObject(userName);
         System.out.println("Client wrote userName String");
+        out.flush();
+    }
+    public void getScoresMap() throws IOException{
+        out.writeObject("GET_SCORES_MAP");
+        System.out.println("Client tries to get the scores map");
         out.flush();
     }
 
@@ -77,6 +85,12 @@ public class GameClient {
 
     public void nextSong() throws IOException {
         out.writeObject("NEXT_SONG");
+        out.flush();
+    }
+    public void sendScore(int score, String userName) throws IOException{
+        out.writeObject("SCORE:" + score + " " + userName);
+        out.flush();
+
     }
 
     public void requestMalList(String userName) throws IOException {
@@ -117,6 +131,7 @@ public class GameClient {
             // Attempts to connect to the hosting server
             GameClient client = new GameClient(serverIp, serverPort, new ClientInterface());
             client.sendUserInfo(userName);
+            currentUserName = userName;
 
             // Gets the anime opening lists
             client.requestMalList(userName);

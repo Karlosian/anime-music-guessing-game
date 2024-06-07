@@ -31,10 +31,7 @@ import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static com.animeguessinggame.animeguessinggame.GameApplication.window;
 
@@ -96,7 +93,13 @@ public class ClientInterface {
         roundNumber = (Label) root.lookup("#roundNumber");
 
         // Links submitAnswer() to FXML submitButton
-        submitButton.setOnAction(event -> submitAnswer());
+        submitButton.setOnAction(event -> {
+            try {
+                submitAnswer();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         // Reset Rounds
         round = 0; points = 0;
@@ -117,7 +120,7 @@ public class ClientInterface {
         mediaPlayer.videoSurface().set(new ImageViewVideoSurface(imageView));
     }
 
-    public void submitAnswer() {
+    public void submitAnswer() throws IOException {
         String clientAnswer = answerBox.getText();
         answerBox.setDisable(true);
 
@@ -131,8 +134,18 @@ public class ClientInterface {
         // Debug
         System.out.println(clientAnswer);
         System.out.println(pointAmassed + " | Total : " + points);
+        gameClient.sendScore(points, gameClient.currentUserName);
+        gameClient.getScoresMap();
     }
 
+    public void doLeaderboard(Map<Integer, String> sortedLeaderBoard){
+        for (Map.Entry<Integer, String> entry : sortedLeaderBoard.entrySet()) {
+            String username = entry.getValue();
+            int score = entry.getKey();
+            System.out.println(username + "'s score is " + score);
+        }
+
+    }
     public void revealAnswer() {
 
     }

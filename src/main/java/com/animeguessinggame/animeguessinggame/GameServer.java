@@ -5,12 +5,12 @@ import dev.katsute.mal4j.anime.Anime;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.animeguessinggame.animeguessinggame.LoadMALList.*;
+import static java.lang.Integer.parseInt;
 
 public class GameServer {
     private ArrayList<String> usernames = new ArrayList<>();
@@ -21,6 +21,9 @@ public class GameServer {
     private AtomicInteger readyForNextRound = new AtomicInteger(0);
     // Lock for thread safety
     private final ReentrantLock lock = new ReentrantLock();
+
+    private int finishedFirstRound = 0;
+    public static Map<Integer, String> scoreUsers = new HashMap<Integer, String>();
     public static String apiKey = new String();
     public static ArrayList<List<ImportantInfo>> AllAnimeLists = new ArrayList<>();
 
@@ -57,6 +60,15 @@ public class GameServer {
             }
         }
         return newList;
+    }
+
+    private void handleScoreReturn(String scoreReturn){
+       String removeStart = scoreReturn.split(":", 2 )[1];
+       int scoreNum = parseInt(removeStart.split(" ", 2)[0]);
+       String userName = removeStart.split(" ", 2)[1];
+       scoreUsers.put(scoreNum, userName);
+
+       scoreUsers = sortLeaderboard(scoreUsers);
     }
 
     private class ClientHandler extends Thread {
@@ -106,6 +118,8 @@ public class GameServer {
                                 sendUsernames(); break;
                             case "GET_ANIME_NAMES":
                                 sendAnimeNames(); break;
+                            case "GET_SCORES_MAP":
+                                broadcastScoresMap(); break;
                             default:
                                 if (command.startsWith("NEXT_SONG")) {
                                     clientReadyForNextRound();
@@ -219,6 +233,18 @@ public class GameServer {
             System.out.println("Server sends String OpeningURL to client");
             client.out.writeObject("OPENING:" + opening.openingList.get(rng).openingURL + " " + opening.animeTitle);
             client.out.flush();
+        }
+    }
+    private void broadcastScoresMap() throws IOException {
+        finishedFirstRound++;
+        if(finishedFirstRound == clients.size()){
+        for (ClientHandler client : clients) {
+            System.out.println("Server sends Map scoreUsers to client");
+            client.out.writeObject(scoreUsers);
+            client.out.flush();
+            finishedFirstRound = 0;
+        }
+        scoreUsers.clear();
         }
     }
 
