@@ -3,15 +3,18 @@ package com.animeguessinggame.animeguessinggame;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GameClient {
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private ClientInterface clientInterface;
+    public ArrayList<String> animeNames = new ArrayList<>();
 
     private static ArrayList<String> usernames = new ArrayList<>();
 
@@ -40,10 +43,9 @@ public class GameClient {
                     System.out.println("Client recieves String message: " + message);
                     String strMessage = (String) message;
                     clientInterface.handleServerMessage(strMessage);
-                } else if (message instanceof ArrayList) {
-                    ArrayList<String> u = (ArrayList<String>) message;
-                    usernames = u;
-                    System.out.println("Connected users: " + usernames);
+                }
+                else if (message instanceof ArrayList) {
+                    animeNames = (ArrayList<String>) message;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -60,6 +62,15 @@ public class GameClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void getAllAnimeTitles() throws IOException, ClassNotFoundException, InterruptedException {
+        out.writeObject("GET_ANIME_NAMES");
+        TimeUnit.SECONDS.sleep(1);
+
+    }
+
+    public void nextSong() throws IOException {
+        out.writeObject("NEXT_SONG");
     }
 
     public void requestMalList(String userName) throws IOException {

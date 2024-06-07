@@ -47,52 +47,77 @@ public class GameServer {
             public ClientHandler(Socket socket) {
                 this.clientSocket = socket;
             }
-            public void run() {
-                try {
-                    out = new ObjectOutputStream(clientSocket.getOutputStream());
-                    in = new ObjectInputStream(clientSocket.getInputStream());
-                    //get username
-                    String userName = (String) in.readObject();
-                    System.out.println("User Name: " + userName);
-                    synchronized (usernames){
-                        usernames.add(userName);
-                    }
-                    while (true) {
-                        try{
+
+        public void run() {
+            try {
+                // out = send info to the client, in = get info from the client
+                out = new ObjectOutputStream(clientSocket.getOutputStream());
+                in = new ObjectInputStream(clientSocket.getInputStream());
+
+                // Get username of the client that just joined
+                String userName = (String) in.readObject();
+                System.out.println("User Name: " + userName);
+
+                //
+                synchronized (usernames){
+                    usernames.add(userName);
+                }
+
+                while (true) {
+                    try{
+                        // Command from client
                         String command = (String) in.readObject();
-                        if (command.equals("GET_MAL_LIST")) {
-                            AllAnimeLists.add(getMalList(userName));
-                            System.out.println("Server sends Operation Complete to client");
-                           // out.writeObject("Operation Complete");
-                            out.flush();
-                        }
-                        else if (command.equals("START_GAME")) {
-                            startGame();
-                        }else if (command.startsWith("GUESS")) {
-                            String guess = command.split(":")[1];
-                            validateGuess(userName, guess);
-                        }
-                        else if (command.equals("GET_USERNAMES")) {
-                            sendUsernames();
-                        }
 
-                        }catch(EOFException e){
-                            //this means that no command was sent, its whatever ig, no need to print anything
+                        // Gets command from client and runs program accordingly
+                        switch (command) {
+                            case "GET_MAL_LIST" :
+                                AllAnimeLists.add(getMalList(userName));
+                                System.out.println("Server sends Operation Complete to client");
+                                // out.writeObject("Operation Complete");
+                                out.flush(); break;
+                            case "START_GAME" :
+                                startGame(); break;
+                            case "GET_USERNAMES":
+                                sendUsernames(); break;
+                            case "GET_ANIME_NAMES":
+                                sendAnimeNames(); break;
+                            default:
+                                if (command.startsWith("NEXT_SONG")) {
+                                    nextRound();
+                                }
+                                // Not included messages
                         }
                     }
+                    catch(EOFException e){
+                        //this means that no command was sent, its whatever ig, no need to print anything
+                    }
+                }
 
-                }
-                catch(IOException | ClassNotFoundException e){
-                    e.printStackTrace();
-                }
+            }
+            catch(IOException | ClassNotFoundException e){
+                e.printStackTrace();
+            }
         }
-            private void sendUsernames() throws IOException {
-                synchronized (usernames) {
-                    System.out.println("Server sends String ArrayList usernames to Client");
-                    out.writeObject(usernames);
-                    out.flush();
+
+        private void sendUsernames() throws IOException {
+            synchronized (usernames) {
+                System.out.println("Server sends String ArrayList usernames to Client");
+                out.writeObject(usernames);
+                out.flush();
+            }
+        }
+
+        private void sendAnimeNames() throws IOException{
+            ArrayList<String> animeTitles = new ArrayList<>();
+            for(List<ImportantInfo> lists: AllAnimeLists ){
+                for(ImportantInfo i: lists){
+                    animeTitles.add(i.animeTitle);
                 }
             }
+            System.out.println("Server sends String ArrayList animeTitles to Client");
+            out.writeObject(animeTitles);
+            out.flush();
+        }
     }
     private List<ImportantInfo> getMalList(String userName) {
             List<Anime> a = importList(GameServer.apiKey, userName);
@@ -103,6 +128,8 @@ public class GameServer {
         currentRound = 0;
         nextRound();
     }
+
+    // Informs the other clients to start new round
     private void nextRound() throws IOException {
         if (currentRound < totalRounds) {
             opening = chooseRandomOpening();
@@ -141,7 +168,7 @@ public class GameServer {
         for (ClientHandler client : clients) {
             System.out.println("Server sends String OpeningURL to client");
             int rng = (int)(Math.random()*opening.openingList.size());
-            client.out.writeObject("OPENING:" + opening.openingList.get(rng).openingURL);
+            client.out.writeObject("OPENING:" + opening.openingList.get(rng).openingURL + " " + opening.animeTitle);
             client.out.flush();
         }
     }

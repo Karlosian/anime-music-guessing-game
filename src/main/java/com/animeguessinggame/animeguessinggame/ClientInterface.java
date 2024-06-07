@@ -1,5 +1,6 @@
 package com.animeguessinggame.animeguessinggame;
 
+import com.almasb.fxgl.net.Client;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -49,15 +50,18 @@ public class ClientInterface {
     @FXML
     private ImageView imageView;
 
-    private Timeline timer;
-    private double remainingTime;
-    private EmbeddedMediaPlayer mediaPlayer;
-    private MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-    private Button submitButton;
-    private int round = 0;
-    private Scene scene;
-    private int points = 0;
+    // Video Player
+    @FXML private ImageView imageView;
+    public EmbeddedMediaPlayer mediaPlayer;
+    public MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 
+    // Game Mechanic Related
+    private Timeline timer;
+    private int round = 0, points = 0;
+    private double remainingTime;
+    public GameClient gameClient;
+
+    // Correct answer per round
     public static String answer = "test"; // change this string to the name of the anime op
 
 
@@ -69,35 +73,18 @@ public class ClientInterface {
 
         hideVideo.setVisible(true);
     }
-    public void display(String URL) {
-        startVideo(URL);
-        startTimer(20);
-
-        hideVideo.setVisible(true);
-    }
 
 
     public ClientInterface() throws IOException {
         new NativeDiscovery().discover();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("game-view.fxml"));
-        Parent root = fxmlLoader.load();
-
+        // Sets up scene
+        fxmlLoader = new FXMLLoader(GameApplication.class.getResource("game-view.fxml"));
+        root = fxmlLoader.load();
         scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
-        // Auto-completion setup
-        answerBox = (TextField) root.lookup("#answerBox");
-        answerBox.setDisable(false);
-
-        possibleSuggestions = Arrays.asList(
-                "C", "C#", "C++", "F#", "GoLang",
-                "Dart", "Java", "JavaScript", "Kotlin", "PHP",
-                "Python", "R", "Swift", "Visual Basic .NET"
-        );
-
-        TextFields.bindAutoCompletion(answerBox, possibleSuggestions);
-
+        // References the FXML elements
         imageView = (ImageView) root.lookup("#imageView");
         progressBar = (ProgressBar) root.lookup("#timeLeft");
         System.out.println("ProgressBar: " + progressBar);
@@ -109,42 +96,20 @@ public class ClientInterface {
         round = 1; points = 0;
     }
 
-    public ClientInterface(Stage stage) throws IOException {
-        new NativeDiscovery().discover();
-
-        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("game-view.fxml"));
-        Parent root = fxmlLoader.load();
-
-        scene = stage.getScene();
-        scene.setRoot(root);
-        stage.setScene(root.getScene());
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-
-        initializeUIComponents(root);
-
-        round = 1; points = 0;
-    }
-    private void initializeUIComponents(Parent root) {
-        // Auto-completion setup
+    // Imports the list of possible answers for autocomplete
+    public void setupAutoCompletion(){
+        // Finds the answerBox in the FXML file
         answerBox = (TextField) root.lookup("#answerBox");
         answerBox.setDisable(false);
 
-        possibleSuggestions = Arrays.asList(
-                "C", "C#", "C++", "F#", "GoLang",
-                "Dart", "Java", "JavaScript", "Kotlin", "PHP",
-                "Python", "R", "Swift", "Visual Basic .NET"
-        );
-
+        // Binds the list to the textbox
         TextFields.bindAutoCompletion(answerBox, possibleSuggestions);
-
-        imageView = (ImageView) root.lookup("#imageView");
-        progressBar = (ProgressBar) root.lookup("#timeLeft");
-        hideVideo = (Label) root.lookup("#showVideo");
-        submitButton = (Button) root.lookup("#submitButton");
-
-        submitButton.setOnAction(event -> submitAnswer());
     }
 
+    public void initializeMediaPlayer (){
+        mediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
+        mediaPlayer.videoSurface().set(new ImageViewVideoSurface(imageView));
+    }
 
 
     public void submitAnswer() {
@@ -156,6 +121,7 @@ public class ClientInterface {
         }
 
         System.out.println(clientAnswer);
+        System.out.println(pointAmassed + " | Total : " + points);
     }
 
     public void revealAnswer() {
@@ -165,16 +131,30 @@ public class ClientInterface {
     public void handleServerMessage(String message) {
         //for thread stuff
         Platform.runLater(() -> {
-            if (message.startsWith("OPENING:")) {
-                String url = message.split(":", 2)[1];
-                System.out.println("URL: " + url);
-                startVideo(url);
-            } else if (message.equals("CORRECT")) {
-                System.out.println("correct");
-            } else if (message.equals("WRONG")) {
-                System.out.println("wrong");
-            } else if (message.equals("GAME_OVER")) {
-                System.out.println("game over");
+            switch (message) {
+                case "CORRECT": case "WRONG": case "GAME_OVER":
+                    System.out.println(message.toLowerCase());
+                default:
+                    if (message.startsWith("OPENING:")) {
+                        // Gets the video file url
+                        String part1 = message.split(":", 2)[1];
+                        String url = part1.split(" ", 2)[0];
+                        String correctAnswer = part1.split(" ", 2)[1];
+
+                        // Changes the correct answer
+                        answer = correctAnswer;
+                        System.out.println("URL: " + url);
+
+                        // Plays new video
+                        startVideo(url);
+                        answerBox.setDisable(false);
+                        answerBox.setText("");
+
+                        // Make media player not visible
+                        hideVideo.setVisible(true);
+                        round++;
+                        roundNumber.setText("Round " + round);
+                    }
             }
         });
     }
@@ -182,15 +162,18 @@ public class ClientInterface {
         return scene;
     }
     public void startVideo(String url) {
-        // VLCJ setup
-        mediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
-        mediaPlayer.videoSurface().set(new ImageViewVideoSurface(imageView));
-        //add event listener to find out when video starts playing
+        //remove existing player
+        disposeMediaPlayer();
+        // Create a new media player
+        initializeMediaPlayer();
+
+        // Add event listener to find out when video starts playing
         mediaPlayer.events().addMediaPlayerEventListener(
             new MediaPlayerEventAdapter() {
                 @Override
                 public void playing(MediaPlayer mediaPlayer) {
                     System.out.println("Video has started playing!");
+                    startTimer(20);
                 }
             }
         );
@@ -198,23 +181,80 @@ public class ClientInterface {
         mediaPlayer.media().play(url);
     }
 
+    private void disposeMediaPlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.controls().stop(); // Stop the media player
+            mediaPlayer.release(); // Release the media player resources
+            mediaPlayer = null; // Set the media player reference to null
+        }
+    }
 
-
+    // Starts the timer right when the video is loaded
     private void startTimer(int timeremaining) {
+        // Starts remainingTime at time allowed for players to guess
         remainingTime = timeremaining;
-        timer = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
-            remainingTime -= 0.01;
-            Platform.runLater(() ->{
-            double progress = remainingTime/timeremaining;
-            progressBar.setProgress(progress);});
-            System.out.println("Remaining Time: " + remainingTime);
-            if (remainingTime <= 0) {
-                hideVideo.setVisible(false);
-                revealAnswer();
-                timer.stop();
-            }
-        }));
-        timer.setCycleCount(Timeline.INDEFINITE);
-        timer.play();
+        //stop timer if already running
+        if (timer != null) {
+            timer.stop();
+        }
+
+        Platform.runLater(() -> {
+            timer = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
+                // Decrements the remaining time
+                remainingTime -= 0.01;
+
+                // Calculates the percentage of the bar to fill
+                double progress = remainingTime/timeremaining;
+                progressBar.setProgress(progress);
+
+                // Reveals the answer when the timer finishes
+                if (remainingTime <= 0) {
+                    hideVideo.setVisible(false);
+                    revealAnswer();
+                    timer.stop();
+                    secondTimer(timeremaining);
+
+                }
+            }));
+            timer.setCycleCount(Timeline.INDEFINITE);
+            timer.play();
+        });
+    }
+
+    // Gives time for the client to read the right answer and see the video
+    private void secondTimer(int timeremaining){
+        // Starts remainingTime at time allowed
+        remainingTime = timeremaining;
+       //stop timer if already running
+        if (timer != null) {
+            timer.stop();
+        }
+
+        Platform.runLater(() -> {
+            timer = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
+                // Decrements the remaining time
+                remainingTime -= 0.01;
+
+                // Calculates the percentage of the bar to fill
+                double progress = remainingTime/timeremaining;
+                progressBar.setProgress(progress);
+
+                if (remainingTime <= 0) {
+                    hideVideo.setVisible(false);
+                    timer.stop();
+
+                    // Goes to next song
+                    try {
+                        gameClient.nextSong();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+            }));
+            timer.setCycleCount(Timeline.INDEFINITE);
+            timer.play();
+        });
+
     }
 }
