@@ -63,6 +63,11 @@ public class GameServer {
         private Socket clientSocket;
         private ObjectInputStream in;
         private ObjectOutputStream out;
+
+        //for sending score info
+        private int score;
+        private String username;
+
         public ClientHandler(Socket socket) {
                 this.clientSocket = socket;
             }

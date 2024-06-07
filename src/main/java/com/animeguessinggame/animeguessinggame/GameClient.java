@@ -14,6 +14,8 @@ public class GameClient {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private ClientInterface clientInterface;
+
+
     public ArrayList<String> animeNames = new ArrayList<>();
 
     private static ArrayList<String> usernames = new ArrayList<>();
