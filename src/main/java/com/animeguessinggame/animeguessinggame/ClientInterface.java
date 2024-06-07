@@ -15,6 +15,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.TextFields;
@@ -46,6 +47,7 @@ public class ClientInterface {
     @FXML private ProgressBar progressBar;
     @FXML private Label hideVideo;
     @FXML private Label roundNumber;
+    @FXML private GridPane leaderBoard;
     private Button submitButton;
 
     // Video Player
@@ -91,6 +93,7 @@ public class ClientInterface {
         hideVideo = (Label) root.lookup("#showVideo");
         submitButton = (Button) root.lookup("#submitButton");
         roundNumber = (Label) root.lookup("#roundNumber");
+        leaderBoard = (GridPane) root.lookup("#leaderboard");
 
         // Links submitAnswer() to FXML submitButton
         submitButton.setOnAction(event -> {
@@ -139,10 +142,13 @@ public class ClientInterface {
     }
 
     public void doLeaderboard(Map<Integer, String> sortedLeaderBoard){
+        int counter = 0; leaderBoard.getChildren().clear();
         for (Map.Entry<Integer, String> entry : sortedLeaderBoard.entrySet()) {
-            String username = entry.getValue();
-            int score = entry.getKey();
-            System.out.println(username + "'s score is " + score);
+            Label username = new Label(entry.getValue());
+            Label score = new Label(String.valueOf(entry.getKey()));
+            leaderBoard.add(username, 0, counter);
+            leaderBoard.add(score, 1, counter);
+            counter++;
         }
 
     }

@@ -8,27 +8,29 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
-         tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <tabs>
         <Tab text="Main Game">
             <content>
-                <VBox alignment="CENTER" prefHeight="600.0" prefWidth="650.0" spacing="5.0">
+                <VBox alignment="CENTER" prefHeight="600.0" prefWidth="650.0" spacing="5.0" styleClass="simpleBackground" stylesheets="@style.css">
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
                     <children>
                         <Label fx:id="roundNumber" text="Round 1">
                             <font>
-                                <Font size="36.0" />
+                                <Font name="Berlin Sans FB" size="36.0" />
                             </font>
                         </Label>
-                        <ProgressBar fx:id="timeLeft" minHeight="-Infinity" prefHeight="20.0" prefWidth="512.0" progress="1">
+                        <ProgressBar fx:id="timeLeft" minHeight="-Infinity" prefHeight="20.0" prefWidth="512.0" progress="1" stylesheets="@style.css">
                             <VBox.margin>
                                 <Insets />
                             </VBox.margin>
@@ -41,13 +43,16 @@
                         </StackPane>
                         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                             <children>
-                                <Label prefHeight="25.0" text="Answer : " />
+                                <Label prefHeight="25.0" text="Answer : ">
+                           <font>
+                              <Font name="Bell MT" size="12.0" />
+                           </font></Label>
                                 <TextField fx:id="answerBox" prefWidth="400.0">
                                     <HBox.margin>
                                         <Insets right="5.0" />
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="submitButton" mnemonicParsing="false" text="Submit" />
+                                <Button fx:id="submitButton" mnemonicParsing="false" styleClass="homePageButton" stylesheets="@style.css" text="Submit" />
                             </children>
                         </HBox>
                     </children>
@@ -63,9 +68,23 @@
                                 <Insets top="35.0" />
                             </VBox.margin>
                             <font>
-                                <Font name="Calibri" size="18.0" />
+                                <Font name="Bodoni MT" size="28.0" />
                             </font>
                         </Label>
+                  <GridPane fx:id="leaderboard" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </GridPane>
                     </children>
                 </VBox>
             </content>

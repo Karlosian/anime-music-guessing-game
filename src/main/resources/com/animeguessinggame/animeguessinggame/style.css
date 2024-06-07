@@ -12,6 +12,8 @@
 
 .homePageBackground {
     -fx-background-image: url(HomePage.png);
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
 }
 
 .homePageButton {
@@ -28,3 +30,28 @@
     -fx-background-color: #811d1d;
     -fx-text-fill: white;
 }
+
+
+/* This is the styling for the game-view.fxml files */
+.simpleBackground {
+    -fx-background-image: url(background.png);
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+}
+
+.progress-bar {
+    -fx-accent: #511a91;
+    -fx-border-radius: 20px;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #686868;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: derive(-fx-accent, 50%);
+    -fx-padding: 0; /* Removes padding */
+    -fx-background-insets: 0; /* Removes margin/inset */
+    -fx-border-radius: 0;
+}
+
