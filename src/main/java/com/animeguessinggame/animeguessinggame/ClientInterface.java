@@ -39,16 +39,17 @@ import java.util.ResourceBundle;
 import static com.animeguessinggame.animeguessinggame.GameApplication.window;
 
 public class ClientInterface {
-    public static List<String> possibleSuggestions;
-    @FXML
-    private TextField answerBox;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private Label hideVideo;
+    // Client Interface FXML Scene
+    private Scene scene;
+    private FXMLLoader fxmlLoader;
+    private Parent root;
 
-    @FXML
-    private ImageView imageView;
+    // UI Elements
+    @FXML private TextField answerBox;
+    @FXML private ProgressBar progressBar;
+    @FXML private Label hideVideo;
+    @FXML private Label roundNumber;
+    private Button submitButton;
 
     // Video Player
     @FXML private ImageView imageView;
@@ -63,8 +64,10 @@ public class ClientInterface {
 
     // Correct answer per round
     public static String answer = "test"; // change this string to the name of the anime op
+    // List of answers that pop up in the suggest box of the answerBox
+    public static List<String> possibleSuggestions;
 
-
+    // !!! Used to test a single round without server !!!
     public void display() {
         //keeping for demo purposes
         window.setScene(scene);
@@ -74,8 +77,9 @@ public class ClientInterface {
         hideVideo.setVisible(true);
     }
 
-
+    // !!! Used to test a single round without server !!!
     public ClientInterface() throws IOException {
+        // Finds VLC media player
         new NativeDiscovery().discover();
 
         // Sets up scene
@@ -87,13 +91,15 @@ public class ClientInterface {
         // References the FXML elements
         imageView = (ImageView) root.lookup("#imageView");
         progressBar = (ProgressBar) root.lookup("#timeLeft");
-        System.out.println("ProgressBar: " + progressBar);
         hideVideo = (Label) root.lookup("#showVideo");
         submitButton = (Button) root.lookup("#submitButton");
+        roundNumber = (Label) root.lookup("#roundNumber");
 
+        // Links submitAnswer() to FXML submitButton
         submitButton.setOnAction(event -> submitAnswer());
 
-        round = 1; points = 0;
+        // Reset Rounds
+        round = 0; points = 0;
     }
 
     // Imports the list of possible answers for autocomplete
@@ -111,15 +117,18 @@ public class ClientInterface {
         mediaPlayer.videoSurface().set(new ImageViewVideoSurface(imageView));
     }
 
-
     public void submitAnswer() {
         String clientAnswer = answerBox.getText();
         answerBox.setDisable(true);
 
+        int pointAmassed = (int)(1000 * (remainingTime / 30));
+
+        // Tally points to client score
         if (clientAnswer.equals(answer)) {
-            points += (int)(1000 * (remainingTime / 30));
+            points += pointAmassed;
         }
 
+        // Debug
         System.out.println(clientAnswer);
         System.out.println(pointAmassed + " | Total : " + points);
     }
@@ -129,7 +138,7 @@ public class ClientInterface {
     }
 
     public void handleServerMessage(String message) {
-        //for thread stuff
+        // For thread stuff
         Platform.runLater(() -> {
             switch (message) {
                 case "CORRECT": case "WRONG": case "GAME_OVER":
@@ -158,9 +167,12 @@ public class ClientInterface {
             }
         });
     }
+
     public Scene getScene() {
         return scene;
     }
+
+    // Loads and displays the VCL video during the start of the rounds
     public void startVideo(String url) {
         //remove existing player
         disposeMediaPlayer();

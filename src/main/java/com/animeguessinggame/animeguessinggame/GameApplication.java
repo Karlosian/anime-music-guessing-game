@@ -23,8 +23,6 @@ public class GameApplication extends Application {
     private static Scene scene;
     private static ClientInterface clientInterface;
 
-
-
     @Override
     public void start(Stage stage) throws IOException {
         // Sets up the FXML files for the user game

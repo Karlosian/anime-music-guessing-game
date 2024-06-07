@@ -26,14 +26,19 @@ public class GameClient {
         new Thread(this::listenForMessages).start();
     }
     public GameClient() {
+
+    }
+
+    public void startGame() throws IOException {
+        out.writeObject("START_GAME");
+        System.out.println("Client wrote START_GAME STRING");
+        out.flush();
     }
     public void sendUserInfo(String userName) throws IOException {
         out.writeObject(userName);
         System.out.println("Client wrote userName String");
         out.flush();
     }
-
-
 
     private void listenForMessages() {
         try {
@@ -48,9 +53,8 @@ public class GameClient {
                     animeNames = (ArrayList<String>) message;
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
+        catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
     }
 
     public void sendGuess(String guess) {
@@ -81,36 +85,13 @@ public class GameClient {
         System.out.println("Client tries to get 'Operation Completed Successfully' String");
     }
 
+    // Leaves the server
     public void close() throws IOException {
         out.close();
         clientSocket.close();
     }
 
-    public static ClientConnectionResult connectClient(String serverIp, int serverPort, String userName) {
-        try {
-            GameClient client = new GameClient(serverIp, serverPort, new ClientInterface());
-            client.sendUserInfo(userName);
-
-            client.requestMalList(userName);
-           //client.close();
-
-            return new ClientConnectionResult(client, usernames);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void startGame() throws IOException {
-        out.writeObject("START_GAME");
-        System.out.println("Client wrote START_GAME STRING");
-        out.flush();
-    }
-
-    public ClientInterface getClientInterface() {
-        return clientInterface;
-    }
-
+    // Class to manage the information given upon a client connecting to a server
     public static class ClientConnectionResult {
         private final GameClient client;
         private final List<String> usernames;
@@ -126,5 +107,27 @@ public class GameClient {
         public List<String> getUsernames() {
             return usernames;
         }
+    }
+
+    // Connects the client to the server
+    public static ClientConnectionResult connectClient(String serverIp, int serverPort, String userName) {
+        try {
+            // Attempts to connect to the hosting server
+            GameClient client = new GameClient(serverIp, serverPort, new ClientInterface());
+            client.sendUserInfo(userName);
+
+            // Gets the anime opening lists
+            client.requestMalList(userName);
+            //client.close();
+
+            // Returns the anime list as well as the usernames of the clients already connected
+            return new ClientConnectionResult(client, usernames);
+        }
+        catch (IOException e) {e.printStackTrace();}
+        return null;
+    }
+
+    public ClientInterface getClientInterface() {
+        return clientInterface;
     }
 }

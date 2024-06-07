@@ -1,7 +1,8 @@
 package com.animeguessinggame.animeguessinggame;
 
-public class OpeningInfo {
-    String openingTitle = new String();
-    String openingURL = new String();
+import java.util.ArrayList;
 
+// Used to store a single opening information
+public class OpeningInfo {
+    String openingTitle = "", openingURL = "";
 }

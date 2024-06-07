@@ -21,30 +21,32 @@ public class GameServer {
     private static int currentRound = 0;
     private static int totalRounds = 20;
 
-        public GameServer(int port) throws IOException {
-                serverSocket = new ServerSocket(port);
-                System.out.println("Server started on port " + port);
-        }
-        public void start(){
-                while(true){
-                        try{
-                                Socket clientSocket = serverSocket.accept();
-                                System.out.println("New client connected");
-                            ClientHandler clientHandler = new ClientHandler(clientSocket);
-                            clients.add(clientHandler);
-                            clientHandler.start();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                }
-        }
+    public GameServer(int port) throws IOException {
+            serverSocket = new ServerSocket(port);
+            System.out.println("Server started on port " + port);
+    }
 
-        private class ClientHandler extends Thread{
-            private Socket clientSocket;
-            private ObjectInputStream in;
-            private ObjectOutputStream out;
+    // Receives the clients that join the server
+    public void start(){
+        while(true){
+            try {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("New client connected");
 
-            public ClientHandler(Socket socket) {
+                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                clients.add(clientHandler);
+                clientHandler.start();
+            }
+            catch (IOException e) {throw new RuntimeException(e);}
+        }
+    }
+
+    private class ClientHandler extends Thread {
+        private Socket clientSocket;
+        private ObjectInputStream in;
+        private ObjectOutputStream out;
+
+        public ClientHandler(Socket socket) {
                 this.clientSocket = socket;
             }
 
@@ -119,11 +121,14 @@ public class GameServer {
             out.flush();
         }
     }
+
     private List<ImportantInfo> getMalList(String userName) {
-            List<Anime> a = importList(GameServer.apiKey, userName);
-            List<AnimeResponse> r = getAllOpenings(a);
-            return getAsOpenings(r);
+        List<Anime> a = importList(GameServer.apiKey, userName);
+        List<AnimeResponse> r = getAllOpenings(a);
+        return getAsOpenings(r);
     }
+
+    // Starts new game at round 0
     private void startGame() throws IOException {
         currentRound = 0;
         nextRound();
@@ -140,30 +145,15 @@ public class GameServer {
         }
     }
 
+    // Selects a random opening using the random opening selector from LoadMALList.java
     private ImportantInfo chooseRandomOpening(){
-            List<ImportantInfo> l = LoadMALList.RandomSelectOpenings(AllAnimeLists, 10);
-            int rng = (int)(Math.random() * 10);
-            return l.get(rng);
-    }
-
-    private void validateGuess(String userName, String guess) throws IOException {
-        boolean isCorrect = guess.equalsIgnoreCase(opening.animeTitle);
-
-        for (ClientHandler client : clients) {
-            if (client.equals(this)) {
-                System.out.println("Server sends String correct or wrong to client");
-                client.out.writeObject(isCorrect ? "CORRECT" : "WRONG");
-                client.out.flush();
-            }
-        }
-        if (isCorrect) {
-            nextRound();
-        }
+        return LoadMALList.RandomSelectOpenings(AllAnimeLists, 10).get((int)(Math.random() * 10));
     }
 
 
 
 
+    // Sends new opening for new rounds to the clients
     private void broadcastOpening(ImportantInfo opening) throws IOException {
         for (ClientHandler client : clients) {
             System.out.println("Server sends String OpeningURL to client");
@@ -172,6 +162,8 @@ public class GameServer {
             client.out.flush();
         }
     }
+
+    // Sends end game message to the clients
     private void endGame() throws IOException {
         for (ClientHandler client : clients) {
             System.out.println("Server sends String GAME_OVER to client");
@@ -179,13 +171,14 @@ public class GameServer {
             client.out.flush();
         }
     }
-        public void StartServer(int port){
-            try{
-                GameServer server = new GameServer(port);
-                server.start();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
+
+    public void StartServer(int port){
+        try{
+            GameServer server = new GameServer(port);
+            server.start();
         }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 }

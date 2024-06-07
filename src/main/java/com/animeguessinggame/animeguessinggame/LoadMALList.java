@@ -17,111 +17,138 @@ import java.util.*;
 
 import static dev.katsute.mal4j.property.ExperimentalFeature.OP_ED_THEMES;
 
-public class LoadMALList {
-    public static Scanner scanner = new Scanner(System.in);
 
+public class LoadMALList {
+    // Fetches the List of anime from MAL api
     public static List<Anime> importList(String cID, String name) {
         MyAnimeList mal = MyAnimeList.withClientID(cID);
-        int num = 0;
         mal.enableExperimentalFeature(OP_ED_THEMES);
+        int num = 0; // Count how many animes where imported
 
         //code taken from MyAnimeList forums
-        List<Anime> animeList = new ArrayList<Anime>();
+        List<Anime> animeList = new ArrayList<>();
         boolean check = true;
         while (check) {
             List<AnimeListStatus> query = mal.getUserAnimeListing(name).withStatus(AnimeStatus.Completed).withOffset(num).search();
             if (query.size() != 10) {
-                num += query.size();
                 query.forEach(entry -> animeList.add(entry.getAnime()));
+                num += query.size();
 
                 System.out.println("Importing Complete");
                 check = false;
             }
-            num += 10;
+            // Queues through all anime list and adds to animeList
             query.forEach(entry -> animeList.add(entry.getAnime()));
+            num += 10;
+
+            // Prints how many animes were imported
             System.out.println("Importing: " + num);
         }
         return animeList;
     }
 
+    // Processes the openings with the anime IDs and adds it to openingList
     public static List<AnimeResponse> getAllOpenings(List<Anime> animeList) {
         ObjectMapper mapper = new ObjectMapper();
 
+        // Creates a list to store the openings
         List<AnimeResponse> openingsList = new ArrayList<AnimeResponse>();
         Set<String> processedAnimeIds = new HashSet<>();
 
-        for(Anime anime : animeList){
-            if (processedAnimeIds.contains(anime.getID().toString())) {
-                continue; // Skip if this anime has already been processed
-            }
+        // Iterates through the items in animeList
+        for(Anime anime : animeList) {
+            // Skip if this anime has already been processed
+            if (processedAnimeIds.contains(anime.getID().toString())) continue;
+
+            // Finds the id of the anime to search for its video url in MAL website
             String id = anime.getID().toString();
             String apiURL = "https://api.animethemes.moe/anime?filter%5Bhas%5D=resources&filter%5Bsite%5D=MyAnimeList&filter%5Bexternal_id%5D=" + id + "&include=animethemes.animethemeentries.videos%2Canimethemes.song&page%5Bnumber%5D=1";
-            try{
+
+            // Searches for the Video url
+            try {
+                // Accesses MAL website
                 URL url = new URL(apiURL);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
+
+                // Gets the response and adds it to openingsList
                 AnimeResponse response = mapper.readValue(conn.getInputStream(), AnimeResponse.class);
                 openingsList.add(response);
+
+                // Add the id to the processed id list
                 processedAnimeIds.add(id);
                 System.out.println("LoadMALList.getAllOpenings: " + anime.getTitle() + " added to list");
-            }catch (IOException e) {
+            } catch (IOException e) {
                 System.out.println("Anime " + anime.getTitle() +  " has no opening(s) ");
             }
-            try {
-                Thread.sleep(700); //implement 700ms delay between requests due to rate limiting
-            } catch (InterruptedException e) {
+
+            // Implement 700ms delay between requests due to rate limiting set by the MAL API
+            try {Thread.sleep(700);}
+
+            // Returns error if thread stops between the delays
+            catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.out.println("Thread was interrupted, failed to complete operation");
             }
         }
+
+        // Returns all the openingLists to be used in GameController
         return openingsList;
     }
 
+    // Filters the anime that actually have openings/endings and sort them into the OpeningInfo class
     public static List<ImportantInfo> getAsOpenings(List<AnimeResponse> animeList){
         List<ImportantInfo> goodList = new ArrayList<ImportantInfo>();
         for(AnimeResponse ar : animeList){
-            if (ar == null || ar.getAnime(true) == null) {
-                continue; // Skip if ar or the anime is null
-            }
+            // Skip if ar or the anime is null
+            if (ar == null || ar.getAnime(true) == null) continue;
+
+            // Formats the anime response using
             ImportantInfo i = new ImportantInfo();
             i.animeTitle = ar.getAnime(true).getName();
             i.openingList = new ArrayList<OpeningInfo>();
+
+            // Creates list of all anime themes to iterate
             List<AnimeTheme> animeThemes = ar.getAnime(true).getAnimethemes();
-            if (animeThemes == null) {
-                continue; // Skip if animeThemes is null
-            }
-            for (AnimeTheme at : ar.getAnime(true).getAnimethemes()) {
+            if (animeThemes == null) continue; // Skip if animeThemes is null
+
+            // Convert AnimeResponse information to OpeningInfo
+            for (AnimeTheme at : animeThemes) {
                 if (at.getType().equals("OP")) {
                     OpeningInfo oi = new OpeningInfo();
                     oi.openingURL = at.getAnimethemeentries().get(0).getVideos().get(0).getLink();
                     oi.openingTitle = at.getSong().getTitle();
-                    i.openingList.add(oi);
+                    i.openingList.add(oi); // Adds all the openings of an anime to the ImportantInfo (one per anime)
                 }
             }
+
+            // Adds all the anime (which include all their openings) in the filtered list
             goodList.add(i);
         }
         return goodList;
     }
 
+    // Shuffles a set amount of anime taken from a user's MAL library
     public static List<ImportantInfo> RandomSelectOpenings(ArrayList<List<ImportantInfo>> listOfLists, int numberOfOpenings){
-        List<ImportantInfo> randomized = new ArrayList<ImportantInfo>();
-        for (int i = 0; i< listOfLists.size(); i++){
-            for(int j = 0; j<(numberOfOpenings/listOfLists.size()); j++){
-                int elementsInUserList = listOfLists.get(i).size();
-                int rng = (int)(Math.random() * (elementsInUserList));
-                ImportantInfo chosenOP = listOfLists.get(i).get(rng);
-                //check if chosen anime has OP links (if not then it is invalid and will be skipped)
-                try{if(chosenOP.openingList.get(0).openingURL != null){
-                    randomized.add(chosenOP);
-                }
-                else{
-                    j--;
-                }}
-                catch (IndexOutOfBoundsException e ){
-                    j--;
-                }
+        List<ImportantInfo> randomized = new ArrayList<>();
+
+        for (int i = 0; i < listOfLists.size(); i++){
+        for (int j = 0; j < (numberOfOpenings/listOfLists.size()); j++){
+            // Finds size of the anime library of the user
+            int elementsInUserList = listOfLists.get(i).size();
+            // Chooses a random anime amongst that library
+            int rng = (int)(Math.random() * (elementsInUserList));
+
+            // Check if chosen anime has OP links (if not then it is invalid and will be skipped)
+            ImportantInfo chosenOP = listOfLists.get(i).get(rng);
+            try {
+                if (chosenOP.openingList.get(0).openingURL != null) randomized.add(chosenOP);
+                else j--;
             }
-        }
+            catch (IndexOutOfBoundsException e){ j--;}
+        }}
+
+        // Shuffles the openings collected from the user
         Collections.shuffle(randomized);
         return randomized;
     }
