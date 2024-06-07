@@ -2,6 +2,7 @@ package com.animeguessinggame.animeguessinggame;
 
 import com.almasb.fxgl.net.ClientConfig;
 import dev.katsute.mal4j.anime.Anime;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.net.*;
@@ -99,7 +100,6 @@ public class GameServer {
                     usernames.add(userName);
                 }
 
-
                 while (true) {
                     try{
                         // Command from client
@@ -123,6 +123,9 @@ public class GameServer {
                             default:
                                 if (command.startsWith("NEXT_SONG")) {
                                     clientReadyForNextRound();
+                                }
+                                if (command.startsWith("SCORE")) {
+                                    handleScoreReturn(command);
                                 }
                                 // Not included messages
                         }
@@ -148,7 +151,6 @@ public class GameServer {
 
         //send a list of all the anime names from all clients to all client
         private void sendAnimeNames() throws IOException{
-
             ArrayList<String> animeTitles = new ArrayList<>();
             for(List<ImportantInfo> lists: AllAnimeLists ){
                 for(ImportantInfo i: lists){
@@ -161,6 +163,18 @@ public class GameServer {
             out.writeObject(animeTitles);
             out.flush();
         }
+    }
+
+    private Map<Integer, String> sortLeaderboard(Map<Integer, String> leaderboard) {
+        ArrayList<Integer> sortedScores = new ArrayList<>(leaderboard.keySet());
+        Collections.sort(sortedScores);
+        Collections.reverse(sortedScores);
+
+        Map<Integer, String> sortedList = new HashMap<Integer, String>();
+        for (int score : sortedScores) {
+            sortedList.put(score, leaderboard.get(score));
+        }
+        return sortedList;
     }
 
     private List<ImportantInfo> getMalList(String userName) {
@@ -222,9 +236,6 @@ public class GameServer {
     private ImportantInfo chooseRandomOpening(){
         return LoadMALList.RandomSelectOpenings(AllAnimeLists, 10).get((int)(Math.random() * 10));
     }
-
-
-
 
     // Sends new opening for new rounds to the clients
     private void broadcastOpening(ImportantInfo opening) throws IOException {

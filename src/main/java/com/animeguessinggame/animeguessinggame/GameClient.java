@@ -62,6 +62,11 @@ public class GameClient {
                 else if (message instanceof ArrayList) {
                     animeNames = (ArrayList<String>) message;
                 }
+                else if (message instanceof Map) {
+                    //append stuff to leaderboard
+                    Map m = (Map<Integer, String>) message;
+                    clientInterface.doLeaderboard(m);
+                }
             }
         }
         catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
