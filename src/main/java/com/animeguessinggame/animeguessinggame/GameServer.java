@@ -7,6 +7,8 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.animeguessinggame.animeguessinggame.LoadMALList.*;
 
@@ -14,6 +16,11 @@ public class GameServer {
     private ArrayList<String> usernames = new ArrayList<>();
     private List<ClientHandler> clients = new ArrayList<>();
     private ServerSocket serverSocket;
+    //AtomicInteger used to keep program thread safe
+    private AtomicInteger playerCounter = new AtomicInteger(0);
+    private AtomicInteger readyForNextRound = new AtomicInteger(0);
+    // Lock for thread safety
+    private final ReentrantLock lock = new ReentrantLock();
     public static String apiKey = new String();
     public static ArrayList<List<ImportantInfo>> AllAnimeLists = new ArrayList<>();
 
@@ -41,11 +48,21 @@ public class GameServer {
         }
     }
 
+    public static ArrayList<String> removeDuplicates(ArrayList<String> list)
+    {
+        ArrayList<String> newList = new ArrayList<String>();
+        for (String element : list) {
+            if (!newList.contains(element)) {
+                newList.add(element);
+            }
+        }
+        return newList;
+    }
+
     private class ClientHandler extends Thread {
         private Socket clientSocket;
         private ObjectInputStream in;
         private ObjectOutputStream out;
-
         public ClientHandler(Socket socket) {
                 this.clientSocket = socket;
             }
@@ -64,6 +81,7 @@ public class GameServer {
                 synchronized (usernames){
                     usernames.add(userName);
                 }
+
 
                 while (true) {
                     try{
@@ -85,7 +103,7 @@ public class GameServer {
                                 sendAnimeNames(); break;
                             default:
                                 if (command.startsWith("NEXT_SONG")) {
-                                    nextRound();
+                                    clientReadyForNextRound();
                                 }
                                 // Not included messages
                         }
@@ -109,13 +127,17 @@ public class GameServer {
             }
         }
 
+        //send a list of all the anime names from all clients to all client
         private void sendAnimeNames() throws IOException{
+
             ArrayList<String> animeTitles = new ArrayList<>();
             for(List<ImportantInfo> lists: AllAnimeLists ){
                 for(ImportantInfo i: lists){
                     animeTitles.add(i.animeTitle);
                 }
             }
+            //remove duplicates
+            animeTitles = removeDuplicates(animeTitles);
             System.out.println("Server sends String ArrayList animeTitles to Client");
             out.writeObject(animeTitles);
             out.flush();
@@ -130,18 +152,50 @@ public class GameServer {
 
     // Starts new game at round 0
     private void startGame() throws IOException {
-        currentRound = 0;
-        nextRound();
+        lock.lock();
+        try {
+            playerCounter.incrementAndGet();
+            System.out.println("PlayerCounter: " + playerCounter);
+            System.out.println("Needed size: " + AllAnimeLists.size());
+            //If all players pressed start game, start the game
+            if (playerCounter.get() == AllAnimeLists.size()) {
+                currentRound = 0;
+                nextRound();
+            }
+        }
+        finally{
+            lock.unlock();
+        }
     }
 
     // Informs the other clients to start new round
     private void nextRound() throws IOException {
-        if (currentRound < totalRounds) {
-            opening = chooseRandomOpening();
-            broadcastOpening(opening);
-            currentRound++;
-        } else {
-            endGame();
+        lock.lock();
+        try {
+            readyForNextRound.set(0);
+            //make sure all players want to go to the next round before going to the next round
+                if (currentRound < totalRounds) {
+                    opening = chooseRandomOpening();
+                    broadcastOpening(opening);
+                    currentRound++;
+                } else {
+                    endGame();
+                }
+        }
+        finally{
+            lock.unlock();
+        }
+    }
+
+    private void clientReadyForNextRound() throws IOException {
+        lock.lock();
+        try {
+            int readyCount = readyForNextRound.incrementAndGet();
+            if (readyCount == clients.size()) {
+                nextRound();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -155,9 +209,9 @@ public class GameServer {
 
     // Sends new opening for new rounds to the clients
     private void broadcastOpening(ImportantInfo opening) throws IOException {
+        int rng = (int)(Math.random()*opening.openingList.size());
         for (ClientHandler client : clients) {
             System.out.println("Server sends String OpeningURL to client");
-            int rng = (int)(Math.random()*opening.openingList.size());
             client.out.writeObject("OPENING:" + opening.openingList.get(rng).openingURL + " " + opening.animeTitle);
             client.out.flush();
         }

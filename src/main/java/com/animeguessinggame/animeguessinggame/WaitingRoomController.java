@@ -42,7 +42,6 @@ public class WaitingRoomController {
         clientInterface.gameClient = gameClient;
 
         clientInterface.possibleSuggestions = animeTitles;
-        System.out.println("animeTitles " + animeTitles);
         clientInterface.setupAutoCompletion();
         stage.setScene(clientInterface.getScene());
 

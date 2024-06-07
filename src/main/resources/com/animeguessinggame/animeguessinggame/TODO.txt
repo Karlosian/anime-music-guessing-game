@@ -1,0 +1,2 @@
+Make scoreboard work (client must send their score to server then fetch other clients' score)
+Make end of game work (very simple, just add a screen that says "The End")
