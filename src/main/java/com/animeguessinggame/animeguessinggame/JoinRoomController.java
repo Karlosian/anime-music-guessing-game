@@ -45,7 +45,7 @@ public class JoinRoomController {
                     GameClient gameClient = result.getClient();
                     List<String> users = result.getUsernames();
 
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("waiting-room.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("FXML/waiting-room.fxml"));
                     Parent waitingRoomRoot = loader.load();
                     WaitingRoomController waitingRoomController = loader.getController();
                     waitingRoomController.initialize(gameClient); //pass gameclient so that game is able to start

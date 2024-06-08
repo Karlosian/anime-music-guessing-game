@@ -3,7 +3,7 @@
 }
 
 .videoBox {
-    -fx-background-image: url(audioImg.gif);
+    -fx-background-image: url(Images/audioImg.gif);
     -fx-background-size: 15%;
     -fx-background-repeat: no-repeat;
     -fx-background-position: center center;
@@ -11,7 +11,7 @@
 }
 
 .homePageBackground {
-    -fx-background-image: url(HomePage.png);
+    -fx-background-image: url(Images/HomePage.png);
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
 }
@@ -34,9 +34,14 @@
 
 /* This is the styling for the game-view.fxml files */
 .simpleBackground {
-    -fx-background-image: url(background.png);
+    -fx-background-image: url(Images/background.png);
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
+}
+
+.serverBackground {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.5, 0, 5);
 }
 
 .progress-bar {

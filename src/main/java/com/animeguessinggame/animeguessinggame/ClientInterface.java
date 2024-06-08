@@ -82,7 +82,7 @@ public class ClientInterface {
         new NativeDiscovery().discover();
 
         // Sets up scene
-        fxmlLoader = new FXMLLoader(GameApplication.class.getResource("game-view.fxml"));
+        fxmlLoader = new FXMLLoader(GameApplication.class.getResource("FXML/game-view.fxml"));
         root = fxmlLoader.load();
         scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());

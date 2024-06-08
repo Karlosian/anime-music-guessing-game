@@ -23,10 +23,12 @@ public class GameApplication extends Application {
     private static Scene scene;
     private static ClientInterface clientInterface;
 
+    public static String roomIp;
+
     @Override
     public void start(Stage stage) throws IOException {
         // Sets up the FXML files for the user game
-        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("home-page.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("FXML/home-page.fxml"));
         Parent root = fxmlLoader.load();
 
         scene = new Scene(root);
@@ -43,7 +45,7 @@ public class GameApplication extends Application {
         window = stage;
         window.setScene(scene);
         window.show();
-
+        window.setResizable(false);
     }
 
     public void startGame() throws IOException {
@@ -52,7 +54,7 @@ public class GameApplication extends Application {
     }
 
     public void createRoom() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("create-room.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("FXML/create-room.fxml"));
         Parent root = fxmlLoader.load();
 
         Label roomCode = (Label) root.lookup("#roomCode");
@@ -67,7 +69,8 @@ public class GameApplication extends Application {
                 Enumeration<InetAddress> addresses = iface.getInetAddresses();
                 while(addresses.hasMoreElements()) {
                     InetAddress addr = addresses.nextElement();
-                    roomCode.setText(addr.getHostAddress());
+                    roomIp = addr.getHostAddress();
+                    roomCode.setText(roomIp);
                     // System.out.println(iface.getDisplayName() + " " + ip);
                 }
             }
@@ -89,7 +92,7 @@ public class GameApplication extends Application {
     }
 
     public void joinRoom() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("join-room.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("FXML/join-room.fxml"));
         Parent root = fxmlLoader.load();
 
         scene = new Scene(root);

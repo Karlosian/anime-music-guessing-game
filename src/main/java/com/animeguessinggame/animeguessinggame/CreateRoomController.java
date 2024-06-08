@@ -5,20 +5,22 @@ import javafx.fxml.FXML;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 
 import static java.lang.Integer.parseInt;
 
 public class CreateRoomController {
-    @FXML
-    private TextField apiKeyField;
-    @FXML
-    private TextField serverPortField;
+    @FXML private TextField apiKeyField;
+    @FXML private TextField serverPortField;
+    @FXML private static GridPane leaderBoard;
     private GameClient gameClient;
 
     @FXML
@@ -38,10 +40,18 @@ public class CreateRoomController {
         }).start();
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("waiting-room.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXML/server-room.fxml"));
             Parent waitingRoomRoot = loader.load();
-            WaitingRoomController waitingRoomController = loader.getController();
-            waitingRoomController.initialize(gameClient);
+            //WaitingRoomController waitingRoomController = loader.getController();
+            //waitingRoomController.initialize(gameClient);
+            Label serverPort = (Label) waitingRoomRoot.lookup("#serverPort");
+            serverPort.setText("Server Ip : " + GameApplication.roomIp);
+
+            Label roomCode = (Label) waitingRoomRoot.lookup("#roomCode");
+            roomCode.setText("Server Port : " + port);
+
+            leaderBoard = (GridPane) waitingRoomRoot.lookup("#playerList");
+
             Scene waitingRoomScene = new Scene(waitingRoomRoot);
 
             // Get the current stage and set the new scene
@@ -52,7 +62,16 @@ public class CreateRoomController {
         }
     }
 
+    public static void updateLeaderBoard(Map<Integer, String> leaderBoardMap) {
+        if (leaderBoardMap.isEmpty()) return;
+
+        int counter = 0; leaderBoard.getChildren().clear();
+        for (Map.Entry<Integer, String> player : leaderBoardMap.entrySet()) {
+            leaderBoard.add(new Label(String.valueOf(player.getValue())), 0, counter);
+            leaderBoard.add(new Label(String.valueOf(player.getKey())), 1, counter);
+        }
     }
+}
 
 
 

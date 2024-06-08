@@ -20,7 +20,7 @@
     <tabs>
         <Tab text="Main Game">
             <content>
-                <VBox alignment="CENTER" prefHeight="600.0" prefWidth="650.0" spacing="5.0" styleClass="simpleBackground" stylesheets="@style.css">
+                <VBox alignment="CENTER" prefHeight="600.0" prefWidth="650.0" spacing="5.0" styleClass="simpleBackground" stylesheets="@../style.css">
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
@@ -30,7 +30,7 @@
                                 <Font name="Berlin Sans FB" size="36.0" />
                             </font>
                         </Label>
-                        <ProgressBar fx:id="timeLeft" minHeight="-Infinity" prefHeight="20.0" prefWidth="512.0" progress="1" stylesheets="@style.css">
+                        <ProgressBar fx:id="timeLeft" minHeight="-Infinity" prefHeight="20.0" prefWidth="512.0" progress="1" stylesheets="@../style.css">
                             <VBox.margin>
                                 <Insets />
                             </VBox.margin>
@@ -38,7 +38,7 @@
                         <StackPane prefHeight="150.0" prefWidth="200.0">
                             <children>
                                 <ImageView id="imageView" fitHeight="384.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true" />
-                                <Label fx:id="showVideo" prefHeight="417.0" prefWidth="511.0" styleClass="videoBox" stylesheets="@style.css" textAlignment="CENTER" />
+                                <Label fx:id="showVideo" prefHeight="417.0" prefWidth="511.0" styleClass="videoBox" stylesheets="@../style.css" textAlignment="CENTER" />
                             </children>
                         </StackPane>
                         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
@@ -52,7 +52,7 @@
                                         <Insets right="5.0" />
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="submitButton" mnemonicParsing="false" styleClass="homePageButton" stylesheets="@style.css" text="Submit" />
+                                <Button fx:id="submitButton" mnemonicParsing="false" styleClass="homePageButton" stylesheets="@../style.css" text="Submit" />
                             </children>
                         </HBox>
                     </children>

@@ -68,8 +68,8 @@ public class GameServer {
        int scoreNum = parseInt(removeStart.split(" ", 2)[0]);
        String userName = removeStart.split(" ", 2)[1];
        scoreUsers.put(scoreNum, userName);
-
        scoreUsers = sortLeaderboard(scoreUsers);
+       CreateRoomController.updateLeaderBoard(scoreUsers);
     }
 
     private class ClientHandler extends Thread {

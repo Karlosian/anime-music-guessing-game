@@ -8,20 +8,20 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="homePageBackground" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.GameApplication">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="homePageBackground" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.animeguessinggame.animeguessinggame.GameApplication">
    <children>
       <Pane prefHeight="200.0" prefWidth="200.0" />
-      <Button mnemonicParsing="false" onAction="#createRoom" styleClass="homePageButton" stylesheets="@style.css" text="Create new Room">
+      <Button mnemonicParsing="false" onAction="#createRoom" styleClass="homePageButton" stylesheets="@../style.css" text="Create new Room">
          <VBox.margin>
             <Insets top="30.0" />
          </VBox.margin>
       </Button>
-      <Button mnemonicParsing="false" onAction="#joinRoom" prefWidth="110.4" styleClass="homePageButton" stylesheets="@style.css" text="Join Room">
+      <Button mnemonicParsing="false" onAction="#joinRoom" prefWidth="110.4" styleClass="homePageButton" stylesheets="@../style.css" text="Join Room">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
       </Button>
-      <Button mnemonicParsing="false" onAction="#startGame" prefWidth="110.4" styleClass="homePageTest" stylesheets="@style.css" text="Test">
+      <Button mnemonicParsing="false" onAction="#startGame" prefWidth="110.4" styleClass="homePageTest" stylesheets="@../style.css" text="Test">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
