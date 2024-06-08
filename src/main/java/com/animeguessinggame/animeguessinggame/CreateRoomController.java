@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -65,11 +66,14 @@ public class CreateRoomController {
     public static void updateLeaderBoard(Map<Integer, String> leaderBoardMap) {
         if (leaderBoardMap.isEmpty()) return;
 
-        int counter = 0; leaderBoard.getChildren().clear();
+        int counter = 0;
+
+        Platform.runLater(() -> {   leaderBoard.getChildren().clear();
         for (Map.Entry<Integer, String> player : leaderBoardMap.entrySet()) {
             leaderBoard.add(new Label(String.valueOf(player.getValue())), 0, counter);
             leaderBoard.add(new Label(String.valueOf(player.getKey())), 1, counter);
         }
+        });
     }
 }
 
