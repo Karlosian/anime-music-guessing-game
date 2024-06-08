@@ -66,13 +66,13 @@ public class CreateRoomController {
     public static void updateLeaderBoard(Map<Integer, String> leaderBoardMap) {
         if (leaderBoardMap.isEmpty()) return;
 
-        int counter = 0;
-
-        Platform.runLater(() -> {   leaderBoard.getChildren().clear();
-        for (Map.Entry<Integer, String> player : leaderBoardMap.entrySet()) {
-            leaderBoard.add(new Label(String.valueOf(player.getValue())), 0, counter);
-            leaderBoard.add(new Label(String.valueOf(player.getKey())), 1, counter);
-        }
+        Platform.runLater(() -> {
+            int counter = 0; leaderBoard.getChildren().clear();
+            for (Map.Entry<Integer, String> player : leaderBoardMap.entrySet()) {
+                leaderBoard.add(new Label(String.valueOf(player.getValue())), 0, counter);
+                leaderBoard.add(new Label(String.valueOf(player.getKey())), 1, counter);
+                counter++;
+            }
         });
     }
 }
