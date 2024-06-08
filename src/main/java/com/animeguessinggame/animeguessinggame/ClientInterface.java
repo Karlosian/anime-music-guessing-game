@@ -142,14 +142,17 @@ public class ClientInterface {
     }
 
     public void doLeaderboard(Map<Integer, String> sortedLeaderBoard){
-        int counter = 0; leaderBoard.getChildren().clear();
-        for (Map.Entry<Integer, String> entry : sortedLeaderBoard.entrySet()) {
-            Label username = new Label(entry.getValue());
-            Label score = new Label(String.valueOf(entry.getKey()));
-            leaderBoard.add(username, 0, counter);
-            leaderBoard.add(score, 1, counter);
-            counter++;
-        }
+        Platform.runLater(() -> {
+            int counter = 0;
+            leaderBoard.getChildren().clear();
+            for (Map.Entry<Integer, String> entry : sortedLeaderBoard.entrySet()) {
+                Label username = new Label(entry.getValue());
+                Label score = new Label(String.valueOf(entry.getKey()));
+                leaderBoard.add(username, 0, counter);
+                leaderBoard.add(score, 1, counter);
+                counter++;
+            }
+        });
 
     }
     public void revealAnswer() {
