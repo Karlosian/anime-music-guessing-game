@@ -3,3 +3,6 @@ Make scoreboard work:
 Take map and append it to leaderboard tab.
 
 Make end of game work (very simple, just add a screen that says "The End")
+
+
+- speed up importing progress by only calling animethemes api when getting url before broadcasting to clients (use titles from myanimelist)

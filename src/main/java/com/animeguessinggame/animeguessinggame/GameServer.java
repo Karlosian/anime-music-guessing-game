@@ -7,6 +7,8 @@ import javafx.util.Pair;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,7 +26,8 @@ public class GameServer {
     private final ReentrantLock lock = new ReentrantLock();
 
     private int finishedFirstRound = 0;
-    public static Map<Integer, String> scoreUsers = new HashMap<Integer, String>();
+    public static Map<Integer, String> scoreUsers = new ConcurrentHashMap<Integer, String>() {
+    };
     public static String apiKey = new String();
     public static ArrayList<List<ImportantInfo>> AllAnimeLists = new ArrayList<>();
 

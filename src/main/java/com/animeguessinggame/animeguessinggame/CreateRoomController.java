@@ -65,7 +65,7 @@ public class CreateRoomController {
 
     public static void updateLeaderBoard(Map<Integer, String> leaderBoardMap) {
         if (leaderBoardMap.isEmpty()) return;
-
+        synchronized (leaderBoardMap){
         Platform.runLater(() -> {
             int counter = 0; leaderBoard.getChildren().clear();
             for (Map.Entry<Integer, String> player : leaderBoardMap.entrySet()) {
@@ -74,6 +74,7 @@ public class CreateRoomController {
                 counter++;
             }
         });
+        }
     }
 }
 
