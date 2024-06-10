@@ -29,9 +29,10 @@ public class GameServer {
     public static Map<Integer, String> scoreUsers = new ConcurrentHashMap<Integer, String>() {
     };
     public static String apiKey = new String();
-    public static ArrayList<List<ImportantInfo>> AllAnimeLists = new ArrayList<>();
+    public static ArrayList<List<Anime>> AllAnimeLists = new ArrayList<>();
 
-    private static ImportantInfo opening;
+    private static String opening;
+    private static String openingAnimeTitle;
     private static int currentRound = 0;
     private static int totalRounds = 20;
 
@@ -155,9 +156,9 @@ public class GameServer {
         //send a list of all the anime names from all clients to all client
         private void sendAnimeNames() throws IOException{
             ArrayList<String> animeTitles = new ArrayList<>();
-            for(List<ImportantInfo> lists: AllAnimeLists ){
-                for(ImportantInfo i: lists){
-                    animeTitles.add(i.animeTitle);
+            for(List<Anime> lists: AllAnimeLists ){
+                for(Anime a: lists){
+                    animeTitles.add(a.getTitle());
                 }
             }
             //remove duplicates
@@ -180,10 +181,9 @@ public class GameServer {
         return sortedList;
     }
 
-    private List<ImportantInfo> getMalList(String userName) {
+    private List<Anime> getMalList(String userName) {
         List<Anime> a = importList(GameServer.apiKey, userName);
-        List<AnimeResponse> r = getAllOpenings(a);
-        return getAsOpenings(r);
+        return a;
     }
 
     // Starts new game at round 0
@@ -236,16 +236,31 @@ public class GameServer {
     }
 
     // Selects a random opening using the random opening selector from LoadMALList.java
-    private ImportantInfo chooseRandomOpening(){
-        return LoadMALList.RandomSelectOpenings(AllAnimeLists, 10).get((int)(Math.random() * 10));
+    private String chooseRandomOpening(){
+
+        String link;
+        String title;
+        while(true){
+            int r = (int)(Math.random()*AllAnimeLists.size());
+            int ra = (int)(Math.random()*AllAnimeLists.get(r).size());
+            Anime a = AllAnimeLists.get(r).get(ra);
+            String id = a.getID().toString();
+            link = LoadMALList.getOpeningURL(id);
+            if(!link.equals("null")){
+                title = a.getTitle();
+                System.out.println(link + " " + title);
+                break;
+            }
+        }
+        openingAnimeTitle = title;
+        return link;
     }
 
     // Sends new opening for new rounds to the clients
-    private void broadcastOpening(ImportantInfo opening) throws IOException {
-        int rng = (int)(Math.random()*opening.openingList.size());
+    private void broadcastOpening(String opening) throws IOException {
         for (ClientHandler client : clients) {
             System.out.println("Server sends String OpeningURL to client");
-            client.out.writeObject("OPENING:" + opening.openingList.get(rng).openingURL + " " + opening.animeTitle);
+            client.out.writeObject("OPENING:" + opening + " " + openingAnimeTitle);
             client.out.flush();
         }
     }

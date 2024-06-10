@@ -8,12 +8,15 @@ import dev.katsute.mal4j.anime.Anime;
 import dev.katsute.mal4j.anime.AnimeListStatus;
 import dev.katsute.mal4j.anime.property.AnimeStatus;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static dev.katsute.mal4j.property.ExperimentalFeature.OP_ED_THEMES;
 
@@ -95,6 +98,46 @@ public class LoadMALList {
         // Returns all the openingLists to be used in GameController
         return openingsList;
     }
+    public static String getOpeningURL(String id){
+        ObjectMapper mapper = new ObjectMapper();
+        String apiURL = "https://api.animethemes.moe/anime?filter%5Bhas%5D=resources&filter%5Bsite%5D=MyAnimeList&filter%5Bexternal_id%5D=" + id + "&include=animethemes.animethemeentries.videos%2Canimethemes.song&page%5Bnumber%5D=1";
+        String openingURL;
+        AnimeResponse a = new AnimeResponse();
+        // Searches for the Video url
+        try {
+            // Accesses AnimeThemes website
+            URL url = new URL(apiURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            String responseString = new BufferedReader(new InputStreamReader(conn.getInputStream()))
+                    .lines().collect(Collectors.joining("\n"));
+            System.out.println(responseString);
+
+
+            // Gets the response and adds it to openingsList
+            AnimeResponse response = mapper.readValue(responseString, AnimeResponse.class);
+            //no opening video link
+            if(!(responseString.contains("OP1.webm"))){
+                return "null";
+            }
+            a = response;
+
+            System.out.println("LoadMALList.getOpeningURL: " + id + " added to list");
+        } catch (IOException e) {
+            System.out.println("Anime " + id + " has no opening(s) ");
+            return "null";
+        }
+        //get random opening url
+        int rng;
+        while(true){
+        rng = (int)(Math.random()*a.getAnime().get(0).getAnimethemes().size());
+            if(a.getAnime().get(0).getAnimethemes().get(rng).getAnimethemeentries().get(0).getVideos().get(0).getLink().contains("-OP")){
+                openingURL = a.getAnime().get(0).getAnimethemes().get(rng).getAnimethemeentries().get(0).getVideos().get(0).getLink();
+                break;
+            }
+        }
+        return openingURL;
+    }
 
     // Filters the anime that actually have openings/endings and sort them into the OpeningInfo class
     public static List<ImportantInfo> getAsOpenings(List<AnimeResponse> animeList){
@@ -127,6 +170,7 @@ public class LoadMALList {
         }
         return goodList;
     }
+
 
     // Shuffles a set amount of anime taken from a user's MAL library
     public static List<ImportantInfo> RandomSelectOpenings(ArrayList<List<ImportantInfo>> listOfLists, int numberOfOpenings){
