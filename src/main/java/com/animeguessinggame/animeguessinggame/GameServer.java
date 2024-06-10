@@ -71,9 +71,14 @@ public class GameServer {
        String removeStart = scoreReturn.split(":", 2 )[1];
        int scoreNum = parseInt(removeStart.split(" ", 2)[0]);
        String userName = removeStart.split(" ", 2)[1];
+       lock.lock();
+       try{
        scoreUsers.put(scoreNum, userName);
        scoreUsers = sortLeaderboard(scoreUsers);
-       CreateRoomController.updateLeaderBoard(scoreUsers);
+       CreateRoomController.updateLeaderBoard(scoreUsers);}
+       finally {
+           lock.unlock();
+       }
     }
 
     private class ClientHandler extends Thread {
@@ -170,13 +175,12 @@ public class GameServer {
     }
 
     private Map<Integer, String> sortLeaderboard(Map<Integer, String> leaderboard) {
-        ArrayList<Integer> sortedScores = new ArrayList<>(leaderboard.keySet());
-        Collections.sort(sortedScores);
-        Collections.reverse(sortedScores);
+        List<Map.Entry<Integer, String>> entries = new ArrayList<>(leaderboard.entrySet());
+        entries.sort((entry1, entry2) -> entry2.getKey().compareTo(entry1.getKey()));
 
-        Map<Integer, String> sortedList = new HashMap<Integer, String>();
-        for (int score : sortedScores) {
-            sortedList.put(score, leaderboard.get(score));
+        Map<Integer, String> sortedList = new LinkedHashMap<>();
+        for (Map.Entry<Integer, String> entry : entries) {
+            sortedList.put(entry.getKey(), entry.getValue());
         }
         return sortedList;
     }
@@ -271,8 +275,9 @@ public class GameServer {
             System.out.println("Server sends Map scoreUsers to client");
             client.out.writeObject(scoreUsers);
             client.out.flush();
-            finishedFirstRound = 0;
+
         }
+        finishedFirstRound = 0;
         scoreUsers.clear();
         }
     }

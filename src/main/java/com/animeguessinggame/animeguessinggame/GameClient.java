@@ -64,7 +64,8 @@ public class GameClient {
                 }
                 else if (message instanceof Map) {
                     //append stuff to leaderboard
-                    Map m = (Map<Integer, String>) message;
+                    Map<Integer, String> m = (Map<Integer, String>) message;
+                    System.out.println("Client receives leaderboard map: " + m);
                     clientInterface.doLeaderboard(m);
                 }
             }
