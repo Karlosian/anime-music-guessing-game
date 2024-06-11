@@ -181,6 +181,7 @@ public class GameServer {
         Map<Integer, String> sortedList = new LinkedHashMap<>();
         for (Map.Entry<Integer, String> entry : entries) {
             sortedList.put(entry.getKey(), entry.getValue());
+            System.out.println(entry.getKey() + " " + entry.getValue());
         }
         return sortedList;
     }
@@ -241,7 +242,6 @@ public class GameServer {
 
     // Selects a random opening using the random opening selector from LoadMALList.java
     private String chooseRandomOpening(){
-
         String link;
         String title;
         while(true){

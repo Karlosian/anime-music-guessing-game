@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -27,12 +28,12 @@ public class GameApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Sets up the FXML files for the user game
+        // Sets up the FXML file for the homepage
         FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("FXML/home-page.fxml"));
         Parent root = fxmlLoader.load();
-
         scene = new Scene(root);
 
+        // Sets up link to download the necessary VLC
         Hyperlink link = (Hyperlink) root.lookup("#downloadLink");
         link.setOnAction(event -> {
             try {
@@ -42,10 +43,16 @@ public class GameApplication extends Application {
             }
         });
 
+        // Sets the main window
         window = stage;
         window.setScene(scene);
         window.show();
         window.setResizable(false);
+
+        // Sets the icon and title of the game
+        Image icon = new Image(getClass().getResource("Images/Icon.png").toExternalForm());
+        window.getIcons().add(icon);
+        window.setTitle("Anime Guessing Game");
     }
 
     public void startGame() throws IOException {

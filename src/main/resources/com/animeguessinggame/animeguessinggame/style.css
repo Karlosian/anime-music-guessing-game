@@ -60,3 +60,36 @@
     -fx-border-radius: 0;
 }
 
+.volume-slider .track {
+    -fx-pref-height: 4px;
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 2px;
+}
+
+.volume-slider .track {
+    -fx-pref-height: 8px;
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 4px;
+}
+
+.volume-slider .thumb {
+    -fx-body-color: linear-gradient(to bottom, #ffffff, #cccccc);
+    -fx-body-radius: 50%;
+    -fx-pref-width: 16px;
+    -fx-pref-height: 16px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #999999;
+    -fx-border-width: 2px;
+    -fx-border-radius: 50%;
+}
+
+.volume-slider .thumb:hover {
+    -fx-body-color: linear-gradient(to bottom, #ffffff, #e0e0e0);
+    -fx-border-color: #666666;
+}
+
+.volume-slider .track-fill {
+    -fx-background-color: #4d90fe;
+    -fx-background-radius: 4px;
+}
