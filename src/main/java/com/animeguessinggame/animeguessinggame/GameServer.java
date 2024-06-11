@@ -75,7 +75,7 @@ public class GameServer {
        try{
        scoreUsers.put(scoreNum, userName);
        scoreUsers = sortLeaderboard(scoreUsers);
-       CreateRoomController.updateLeaderBoard(scoreUsers);}
+       CreateRoomController.instance.updateLeaderBoard(scoreUsers);}
        finally {
            lock.unlock();
        }
@@ -183,6 +183,7 @@ public class GameServer {
             sortedList.put(entry.getKey(), entry.getValue());
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
+        sortedList.forEach((key, value) -> System.out.println( "sorted: " +key + " " + value));
         return sortedList;
     }
 

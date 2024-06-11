@@ -61,12 +61,6 @@
 }
 
 .volume-slider .track {
-    -fx-pref-height: 4px;
-    -fx-background-color: #e0e0e0;
-    -fx-background-radius: 2px;
-}
-
-.volume-slider .track {
     -fx-pref-height: 8px;
     -fx-background-color: #e0e0e0;
     -fx-background-radius: 4px;
@@ -93,3 +87,4 @@
     -fx-background-color: #4d90fe;
     -fx-background-radius: 4px;
 }
+

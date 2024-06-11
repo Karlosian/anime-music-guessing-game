@@ -55,7 +55,7 @@ public class GameClient {
             while (true) {
                 Object message = in.readObject();
                 if (message instanceof String) {
-                    System.out.println("Client recieves String message: " + message);
+                    //System.out.println("Client recieves String message: " + message);
                     String strMessage = (String) message;
                     clientInterface.handleServerMessage(strMessage);
                 }

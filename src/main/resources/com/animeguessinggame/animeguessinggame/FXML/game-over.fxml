@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="230.0" layoutY="172.0" text="Game Over!">
+         <font>
+            <Font size="65.0" />
+         </font>
+      </Label>
+      <Label layoutX="295.0" layoutY="292.0" text="Please create a new room to play again." />
+   </children>
+</AnchorPane>
