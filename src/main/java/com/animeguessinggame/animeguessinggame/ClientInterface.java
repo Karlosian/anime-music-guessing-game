@@ -9,10 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 
 import javafx.scene.layout.GridPane;
@@ -57,9 +54,10 @@ public class ClientInterface {
 
     // Game Mechanic Related
     private Timeline timer;
-    private int round = 0, points = 0;
+    private int round = 0, points = 0, volume = 100;
     private double remainingTime;
     public GameClient gameClient;
+    private boolean alreadySubmitted = false;
 
     // Correct answer per round
     public static String answer = "test"; // change this string to the name of the anime op
@@ -95,6 +93,12 @@ public class ClientInterface {
         roundNumber = (Label) root.lookup("#roundNumber");
         leaderBoard = (GridPane) root.lookup("#leaderboard");
 
+        Slider volumeSlider = (Slider) root.lookup("#volumeslider");
+        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            mediaPlayer.audio().setVolume(newValue.intValue());
+            volume = newValue.intValue();
+        });
+
         // Links submitAnswer() to FXML submitButton
         submitButton.setOnAction(event -> {
             try {
@@ -124,8 +128,10 @@ public class ClientInterface {
     }
 
     public void submitAnswer() throws IOException {
+        alreadySubmitted = true;
         String clientAnswer = answerBox.getText();
         answerBox.setDisable(true);
+        submitButton.setDisable(true);
 
         int pointAmassed = (int)(1000 * (remainingTime / 30));
 
@@ -143,6 +149,7 @@ public class ClientInterface {
 
     public void doLeaderboard(Map<Integer, String> sortedLeaderBoard){
         Platform.runLater(() -> {
+            sortedLeaderBoard.forEach((key, value) -> System.out.println(key + " " + value));
             int counter = 0;
             leaderBoard.getChildren().clear();
             for (Map.Entry<Integer, String> entry : sortedLeaderBoard.entrySet()) {
@@ -163,8 +170,13 @@ public class ClientInterface {
         // For thread stuff
         Platform.runLater(() -> {
             switch (message) {
-                case "CORRECT": case "WRONG": case "GAME_OVER":
-                    System.out.println(message.toLowerCase());
+                case "GAME_OVER":
+                    try {
+                        endGame();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
                 default:
                     if (message.startsWith("OPENING:")) {
                         // Gets the video file url
@@ -174,7 +186,7 @@ public class ClientInterface {
 
                         // Changes the correct answer
                         answer = correctAnswer;
-                        System.out.println("URL: " + url);
+                        //System.out.println("URL: " + url);
 
                         // Plays new video
                         startVideo(url);
@@ -190,6 +202,17 @@ public class ClientInterface {
         });
     }
 
+    public void endGame() throws IOException {
+        disposeMediaPlayer();
+        if (timer != null) {
+            timer.stop();
+        }
+        //add end message
+        Parent root = FXMLLoader.load(getClass().getResource("FXML/game-over.fxml"));
+        scene = new Scene(root);
+    }
+
+
     public Scene getScene() {
         return scene;
     }
@@ -201,12 +224,15 @@ public class ClientInterface {
         // Create a new media player
         initializeMediaPlayer();
 
+        mediaPlayer.audio().setVolume(volume);
+
         // Add event listener to find out when video starts playing
         mediaPlayer.events().addMediaPlayerEventListener(
             new MediaPlayerEventAdapter() {
                 @Override
                 public void playing(MediaPlayer mediaPlayer) {
                     System.out.println("Video has started playing!");
+                    submitButton.setDisable(false);
                     startTimer(20);
                 }
             }
@@ -246,6 +272,7 @@ public class ClientInterface {
                     hideVideo.setVisible(false);
                     revealAnswer();
                     timer.stop();
+                    if(!alreadySubmitted){try {submitAnswer();} catch (IOException e) {throw new RuntimeException(e);}}
                     secondTimer(timeremaining);
 
                 }
@@ -257,6 +284,7 @@ public class ClientInterface {
 
     // Gives time for the client to read the right answer and see the video
     private void secondTimer(int timeremaining){
+        alreadySubmitted = false;
         // Starts remainingTime at time allowed
         remainingTime = timeremaining;
        //stop timer if already running
